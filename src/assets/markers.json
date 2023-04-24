@@ -1,0 +1,24 @@
+{
+  "markers": [
+      {
+          "title": "zone non couverte",
+          "isUrgent": true,
+          "image":"https://www.tunisienumerique.com/wp-content/uploads/2020/01/bourguiba.jpg",
+          "time":"01-04-2023 13:45:00",
+          "longitude": 10.1815,
+          "latitude": 36.8065
+      },
+      {
+          "title": "zone couverte",
+          "isUrgent": false,
+          "image":"https://www.mifuguemiraison.com/wp-content/uploads/2019/11/bizerte-port-medina-tunisie-1200x812.jpg",
+          "time":"02-04-2023 13:45:00",
+          "longitude": 9.8642,
+          "latitude": 37.2768
+      }
+
+
+
+
+  ]
+}

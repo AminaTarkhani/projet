@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
+    </ion-buttons>
+        <ion-title>Prospection</ion-title>
+		<ion-buttons slot="end">
+			<ion-button class="bordered" fill="solid" color="light">
+                <ion-icon name="notifications"></ion-icon>
+            </ion-button>
+		</ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+    <ion-item>
+      <ion-select label="Type d'identité" placeholder="ID type" [(ngModel)]="place">
+        <ion-select-option value="CIN">CIN</ion-select-option>
+        <ion-select-option value="PASS">PASSEPORT</ion-select-option>
+        <ion-select-option value="SEJ">SEJOUR</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-button type="submit" shape="round" expand="block" (click)="Search()">Search</ion-button>
+
+
+</ion-content>

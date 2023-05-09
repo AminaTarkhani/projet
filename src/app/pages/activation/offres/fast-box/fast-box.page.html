@@ -1,0 +1,70 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>FastBox</ion-title>
+  </ion-toolbar>
+</ion-header>
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">FastBox</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <swiper-container>
+    <swiper-slide>
+      <ion-card>
+        <ng-container>
+          <ion-item>
+            <ion-label>Client possede une ligne:</ion-label>
+            <ion-select>
+              <ion-select-option value="OUI">OUI</ion-select-option>
+              <ion-select-option value="NON">NON</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <div>
+            <label for="numero">Numero de TT:</label>
+            <input type="text" id="numer" name="numero">
+          </div>
+      </ng-container>
+
+    </ion-card>
+    <div class="ion-text-center">
+      <ion-button (click)="Verifier()">Verifier</ion-button>
+    </div>
+    </swiper-slide>
+    <swiper-slide>
+      <ion-content>
+        <ion-list>
+          <ion-item>
+            <ion-label>Catégorie</ion-label>
+            <ion-select placeholder="Sélectionner une catégorie">
+              <ion-select-option value="ADSL jdid">ADSL jdid</ion-select-option>
+              <ion-select-option value="Dual Play">Dual Play</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label>Numéro de série</ion-label>
+            <ion-input type="text" placeholder="Entrez le numéro de série"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label>Débit</ion-label>
+            <ion-select placeholder="Sélectionner un débit">
+              <ion-select-option value="8G">8G</ion-select-option>
+              <ion-select-option value="12G">12G</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-label>Choisir l'abonnement :</ion-label>
+    <ion-select [(ngModel)]="selectedAbonnement">
+      <ion-select-option value="fastBox1P2PAnnuelle">Fast Box 1P/2P annuelle</ion-select-option>
+      <ion-select-option value="fastBox1P2PSemestrielle">Fast Box 1P/2P semestrielle</ion-select-option>
+      <ion-select-option value="fastBoxJdid">Fast Box Jdid</ion-select-option>
+      <ion-select-option value="fastBoxPlus">Fast+ Box</ion-select-option>
+    </ion-select>
+    <ion-item>
+      <ion-label>Durée:</ion-label>
+      <ion-checkbox [(ngModel)]="isAnnuelle">Annuelle</ion-checkbox>
+      <ion-checkbox [(ngModel)]="isSemestrielle">Semestrielle</ion-checkbox>
+      <ion-checkbox [(ngModel)]="isMensuelle">Mensuelle</ion-checkbox>
+    </ion-item>
+        </ion-list>
+      </ion-content>
+    </swiper-slide>
+  </swiper-container>

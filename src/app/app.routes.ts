@@ -54,7 +54,27 @@ export const routes: Routes = [
   },  {
     path: 'formulaire',
     loadComponent: () => import('./pages/prospection/formulaire/formulaire.page').then( m => m.FormulairePage)
+  },  {
+    path: 'activer',
+    loadComponent: () => import('./pages/activation/activer/activer.page').then( m => m.ActiverPage)
   },
+  {
+    path: 'interfaceactivation',
+    loadComponent: () => import('./pages/activation/interfaceactivation/interfaceactivation.page').then( m => m.InterfaceactivationPage)
+  },
+  {
+    path: 'offres',
+    loadComponent: () => import('./pages/activation/offres/offres.page').then( m => m.OffresPage)
+  },
+  {
+    path: 'super-box',
+    loadComponent: () => import('./pages/activation/offres/super-box/super-box.page').then( m => m.SuperBoxPage)
+  },
+  {
+    path: 'fast-box',
+    loadComponent: () => import('./pages/activation/offres/fast-box/fast-box.page').then( m => m.FastBoxPage)
+  },
+
 
 
 

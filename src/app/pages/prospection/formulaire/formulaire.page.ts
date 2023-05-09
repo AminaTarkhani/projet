@@ -19,9 +19,6 @@ import { AlertController } from '@ionic/angular';
 export class FormulairePage implements OnInit {
 
 
-
-
-
   lati: any | undefined;
   longi: any ;
 

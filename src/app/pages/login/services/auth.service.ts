@@ -51,11 +51,11 @@ export class AuthService {
 
 
   login(userName: string, password: string): Observable<{ token: string }>{
-    
+
     return this.http
     .post<{token: string}>(
-      `${environment.baseApiUrl}/login/signin`, 
-      {userName, password}, 
+      `${environment.baseApiUrl}/api/login`,
+      {userName, password},
       this.httpOptions
     )
     .pipe(take(1),
@@ -68,7 +68,7 @@ export class AuthService {
       this.user$.next(decodedToken.user);
     })
     );
-  
+
   }
 
 

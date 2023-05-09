@@ -10,6 +10,8 @@ ion-content{
       box-shadow: none;
       border: 1px solid #e1e1e1;
       padding: 24px;
+      height: 100vh;
+
 
       ion-button {
         margin-top: 16px;
@@ -42,6 +44,8 @@ ion-content{
     align-items: center;
     margin-top: 50px;
     margin-bottom: 20px;
+    height: 100vh;
+
 
   }
 
@@ -54,6 +58,8 @@ ion-content{
       justify-content: center;
       align-items: center;
       margin-top: 80px;
+      height: 100vh;
+
 
       .header-text {
       font-size: 36px;

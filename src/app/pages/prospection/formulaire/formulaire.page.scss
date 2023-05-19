@@ -1,5 +1,5 @@
 ion-title{
-  margin-top: 10%;
+  margin-top: 5%;
 
   font-size: 32px;
   text-align: center;
@@ -15,35 +15,42 @@ ion-radio-group{
   ion-radio::part(container) {
     width: 30px;
     height: 30px;
-    
+
     border-radius: 8px;
     border: 2px solid #ddd;
   }
-  
+
   ion-radio::part(mark) {
     background: none;
     transition: none;
     transform: none;
     border-radius: 0;
   }
-  
+
   ion-radio.radio-checked::part(container) {
     background: #2dd36f;
     border-color: transparent;
   }
-  
+
   ion-radio.radio-checked::part(mark) {
     width: 6px;
     height: 10px;
-  
+
     border-width: 0px 2px 2px 0px;
     border-style: solid;
     border-color: #fff;
-  
+
     transform: rotate(45deg);
   }
 }
+
+
+
 form {
+
+  max-width: 700px;
+  margin: auto;
+
     ion-card {
       margin-left: 5%;
       margin-right: 5%;
@@ -66,4 +73,4 @@ form {
       }
 
     }
-  }
+}

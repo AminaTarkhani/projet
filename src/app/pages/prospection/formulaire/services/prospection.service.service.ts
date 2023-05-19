@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class ProspectionServiceService {
+export class ProspectionService {
 
 
   //private prospection$ = new BehaviorSubject<ProspectionForm>(null!);

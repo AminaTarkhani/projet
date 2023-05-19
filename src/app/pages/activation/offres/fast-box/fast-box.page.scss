@@ -7,3 +7,9 @@ swiper-container {
   height: 100vh;
   margin-top: 0;
 }
+canvas {
+  display: block;
+  width: 500;
+  height: auto;
+  touch-action: none;
+}

@@ -1,194 +1,173 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>interfaceactivation</ion-title>
+    <ion-title>Interface d'activation</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Activation</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <form [formGroup]="prospector" (ngSubmit)="onSubmit()">
 
   <ion-grid>
     <ion-row>
       <ion-col size="6">
         <ion-input
-          #Name="ngModel"
-          ngModel
-          label="Nom" label-placement="floating" fill="outline" placeholder="Nom" type="text"
-          name="name"
+          label="Nom"
+          label-placement="floating"
+           fill="outline"
+            placeholder="Nom"
+            type="text"
+            name="name"
+            formControlName="nom"
           required >
         </ion-input>
-
         <ion-input
-          #Prenom="ngModel"
-          ngModel
+
+
           label="Prenom"
           label-placement="floating"
           fill="outline"
           placeholder="Prenom"
           type="text"
-          name="prenom"
+          formControlName="prenom"
           required
         >
         </ion-input>
 
+        <ion-item>
+          <ion-select label="Type d'identité" placeholder="ID type" formControlName="numeroidentite" >
+            <ion-select-option value="CIN">CIN</ion-select-option>
+            <ion-select-option value="PASS">PASSEPORT</ion-select-option>
+            <ion-select-option value="SEJ">SEJOUR</ion-select-option>
+
+          </ion-select>
+        </ion-item>
+
         <ion-input
-          #TypeIdentite="ngModel"
-          ngModel
-          label="Type d'identité"
+
+          label="Numero d'identite"
           label-placement="floating"
           fill="outline"
-          placeholder="Type d'identité"
+          placeholder="Numero d identite"
           type="text"
-          name="typeIdentite"
-          required
+          formControlName="numeroidentite"
+           required
         >
         </ion-input>
 
         <ion-input
-          #CIN="ngModel"
-          ngModel
-          label="CIN"
-          label-placement="floating"
-          fill="outline"
-          placeholder="CIN"
-          type="text"
-          name="cin"
-          required
-        >
-        </ion-input>
 
-        <ion-input
-          #DateNaissance="ngModel"
-          ngModel
           label="Date de naissance"
           label-placement="floating"
           fill="outline"
           placeholder="Date de naissance"
-          type="date"
-          name="dateNaissance"
+          type="Date"
+          formControlName="naissance"
           required
         >
         </ion-input>
 
         <ion-input
-          #Gouvernorat="ngModel"
-          ngModel
+
           label="Gouvernorat"
           label-placement="floating"
           fill="outline"
           placeholder="Gouvernorat"
           type="text"
-          name="gouvernorat"
+          formControlName="gouvernorat"
           required
         >
+        </ion-input>
+        <ion-input
+
+
+          label="Nationalte"
+           label-placement="floating"
+            fill="outline" placeholder="Nationalite"
+            type="text"
+
+          formControlName="nationalite"
+          required >
         </ion-input>
       </ion-col>
 
       <ion-col size="6">
         <ion-input
-          #Delegation="ngModel"
-          ngModel
+
           label="Délégation"
           label-placement="floating"
           fill="outline"
           placeholder="Délégation"
           type="text"
-          name="delegation"
+          formControlName="delegation"
           required
         >
         </ion-input>
 
         <ion-input
-          #Localite="ngModel"
-          ngModel
+
           label="Localité"
           label-placement="floating"
           fill="outline"
           placeholder="Localité"
           type="text"
-          name="localite"
+          formControlName="localite"
           required
         >
         </ion-input>
 
         <ion-input
-          #Adresse="ngModel"
-          ngModel
+
           label="Adresse"
           label-placement="floating"
           fill="outline"
           placeholder="Adresse"
           type="text"
-          name="adresse"
+          formControlName="adresse"
           required
         >
         </ion-input>
 
         <ion-input
-          #CodePostal="ngModel"
-          ngModel
+
           label="Code postal"
           label-placement="floating"
           fill="outline"
           placeholder="Code postal"
           type="text"
-          name="codePostal"
+          formControlName="codepostale"
           required
         >
         </ion-input>
         <ion-input
-  #NumContact="ngModel"
-  ngModel
+
   label="Numéro de contact"
   label-placement="floating"
   fill="outline"
   placeholder="Numéro de contact"
   type="tel"
-  name="numContact"
+  formControlName="numContact"
   required
 >
 </ion-input>
 
 <ion-input
-  #Email="ngModel"
-  ngModel
   label="Adresse email"
   label-placement="floating"
   fill="outline"
   placeholder="Adresse email"
   type="email"
-  name="email"
+  formControlName="email"
   required
 >
+
 </ion-input>
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-col size="6">
-    <ion-list *ngIf="isFirstColumn">
-      <ion-item>
-        <ion-select
-          aria-label="Nationalite"
-          [compareWith]="compareWith"
-          placeholder="Nationalite"
-          (ionChange)="handleChange($event)"
-          [(ngModel)]="selectedNationalite"
-        >
-          <ion-select-option *ngFor="let nationalite of nationalites" [value]="nationalite">{{ nationalite.name }}</ion-select-option>
-          <ion-select-option value="Autre">Autre</ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-item *ngIf="selectedNationalite === 'Autre'">
-        <ion-label position="stacked">Nationalite</ion-label>
-        <ion-input type="text" [(ngModel)]="otherNationalite"></ion-input>
-      </ion-item>
-    </ion-list>
-    <div class="ion-text-center">
-      <ion-button (click)="Valider()">Valider</ion-button>
-    </div>
-</ion-col>
+
+<ion-button (click)="navigateToOffres()" type="submit" shape="round" expand="block">Suivant</ion-button>
+
+
+</form>
+
 </ion-content>

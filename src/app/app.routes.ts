@@ -1,7 +1,10 @@
-import { Routes } from '@angular/router';
+
+import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from './pages/login/guards/auth.guard';
 
 export const routes: Routes = [
+
+
   {
     path: 'login',
     loadComponent: () => import('./pages/login/login.page').then( m => m.LoginPage)
@@ -54,7 +57,8 @@ export const routes: Routes = [
   },  {
     path: 'formulaire',
     loadComponent: () => import('./pages/prospection/formulaire/formulaire.page').then( m => m.FormulairePage)
-  },  {
+  },
+  {
     path: 'activer',
     loadComponent: () => import('./pages/activation/activer/activer.page').then( m => m.ActiverPage)
   },
@@ -72,10 +76,13 @@ export const routes: Routes = [
   },
   {
     path: 'fast-box',
+
     loadComponent: () => import('./pages/activation/offres/fast-box/fast-box.page').then( m => m.FastBoxPage)
+
   },
 
 
 
 
 ];
+

@@ -1,70 +1,159 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
     <ion-title>FastBox</ion-title>
   </ion-toolbar>
 </ion-header>
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">FastBox</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content >
+  <form [formGroup]="prospector" (ngSubmit)="submit()">
+
   <swiper-container>
     <swiper-slide>
       <ion-card>
-        <ng-container>
-          <ion-item>
-            <ion-label>Client possede une ligne:</ion-label>
-            <ion-select>
-              <ion-select-option value="OUI">OUI</ion-select-option>
-              <ion-select-option value="NON">NON</ion-select-option>
-            </ion-select>
-          </ion-item>
-          <div>
-            <label for="numero">Numero de TT:</label>
-            <input type="text" id="numer" name="numero">
-          </div>
-      </ng-container>
+          <ion-label>Client possede une ligne:</ion-label>
+          <ion-select formControlName="clientPossedeNumero">
+            <ion-select-option value="OUI">OUI</ion-select-option>
+            <ion-select-option value="NON">NON</ion-select-option>
+          </ion-select>
 
-    </ion-card>
-    <div class="ion-text-center">
-      <ion-button (click)="Verifier()">Verifier</ion-button>
-    </div>
+        <div>
+          <label for="numero">Numéro de TT :</label>
+          <input type="text" id="numeroTT" name="numeroTT" formControlName="numeroTT">
+        </div>
+      </ion-card>
+
+      <div class="ion-text-center">
+        <ion-button (click)="Verifier()">Verifier</ion-button>
+      </div>
     </swiper-slide>
     <swiper-slide>
-      <ion-content>
-        <ion-list>
+      <ion-list>
+        <form [formGroup]="prospector">
           <ion-item>
-            <ion-label>Catégorie</ion-label>
-            <ion-select placeholder="Sélectionner une catégorie">
+
+            <ion-select
+            label="Sélectionner une catégorie :"
+          label-placement="floating" formControlName="categorie" >
               <ion-select-option value="ADSL jdid">ADSL jdid</ion-select-option>
               <ion-select-option value="Dual Play">Dual Play</ion-select-option>
             </ion-select>
           </ion-item>
-          <ion-item>
-            <ion-label>Numéro de série</ion-label>
-            <ion-input type="text" placeholder="Entrez le numéro de série"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label>Débit</ion-label>
-            <ion-select placeholder="Sélectionner un débit">
-              <ion-select-option value="8G">8G</ion-select-option>
-              <ion-select-option value="12G">12G</ion-select-option>
-            </ion-select>
-          </ion-item>
-          <ion-label>Choisir l'abonnement :</ion-label>
-    <ion-select [(ngModel)]="selectedAbonnement">
-      <ion-select-option value="fastBox1P2PAnnuelle">Fast Box 1P/2P annuelle</ion-select-option>
-      <ion-select-option value="fastBox1P2PSemestrielle">Fast Box 1P/2P semestrielle</ion-select-option>
-      <ion-select-option value="fastBoxJdid">Fast Box Jdid</ion-select-option>
-      <ion-select-option value="fastBoxPlus">Fast+ Box</ion-select-option>
-    </ion-select>
-    <ion-item>
-      <ion-label>Durée:</ion-label>
-      <ion-checkbox [(ngModel)]="isAnnuelle">Annuelle</ion-checkbox>
-      <ion-checkbox [(ngModel)]="isSemestrielle">Semestrielle</ion-checkbox>
-      <ion-checkbox [(ngModel)]="isMensuelle">Mensuelle</ion-checkbox>
-    </ion-item>
-        </ion-list>
-      </ion-content>
+          <ion-input
+            type="text"
+            formControlName="numeroserie"
+            label="Numéro de série"
+            label-placement="floating"
+            fill="outline"
+            errorText="Numéro de série requis"
+          ></ion-input>
+          <ion-select
+            formControlName="debit"
+            label="Debit"
+            label-placement="floating"
+            fill="outline"
+            errorText="Débit requis"
+          >
+            <ion-select-option value="8G">8G</ion-select-option>
+            <ion-select-option value="12G">12G</ion-select-option>
+          </ion-select>
+          <ion-select
+            formControlName="abonnement"
+            label="Abonnement"
+            label-placement="floating"
+            fill="outline"
+            errorText="Abonnement requis"
+          >
+            <ion-select-option value="Mensuelle">Mensuelle</ion-select-option>
+            <ion-select-option value="semestrielle">Semestrielle</ion-select-option>
+            <ion-select-option value="Annuelle">Annuelle</ion-select-option>
+          </ion-select>
+          <ion-input
+          type="text"
+          formControlName="prix"
+          label="Prix"
+          label-placement="floating"
+          fill="outline"
+          errorText="Prix requis"
+          ></ion-input>
+          <ion-input
+          type="text"
+          formControlName="msisdn"
+          label="MSISDN"
+          label-placement="floating"
+          fill="outline"
+          errorText="MSISDN requis"
+        ></ion-input>
+          <div class="ion-text-center">
+            <ion-button (click)="Suivant()">Suivant</ion-button>
+          </div>
+        </form>
+      </ion-list>
     </swiper-slide>
-  </swiper-container>
+    <swiper-slide>
+      <ion-item>
+        <label for="nom">Signature Client :</label>
+        <canvas #signaturePad></canvas>
+
+        <div class="ion-text-center">
+          <ion-buttons>
+            <ion-button (click)="clear()">Clear</ion-button>
+          </ion-buttons>
+          <ion-buttons>
+            <ion-button (click)="submit()">Submit</ion-button>
+</ion-buttons>
+</div>
+</ion-item>
+<div class="ion-text-center">
+  <ion-button (click)="Valider()">Valider</ion-button>
+</div>
+</swiper-slide>
+<swiper-slide>
+  <form #form="ngForm" (ngSubmit)="onSubmit()">
+    <ion-card>
+      <ion-item>
+        <ion-text slot="start">Contrat</ion-text>
+        <ion-icon
+        name='camera'
+        slot="end"
+        (click)="submitImg()"
+        ></ion-icon>
+
+      </ion-item>
+      <ion-item>
+        <ion-text slot="start">Preuve de residence</ion-text>
+        <ion-icon
+        name='camera'
+        slot="end"
+        (click)="submitImg()"
+        ></ion-icon>
+
+      </ion-item>
+      <ion-item>
+        <ion-text slot="start">Demande d'abonnement</ion-text>
+        <ion-icon
+        name='camera'
+        slot="end"
+        (click)="submitImg()"
+        ></ion-icon>
+      </ion-item>
+      <ion-item>
+        <ion-text slot="start">Condition Specifique</ion-text>
+        <ion-icon
+        name='camera'
+        slot="end"
+        (click)="submitImg()"
+        ></ion-icon>
+      </ion-item>
+    </ion-card>
+    <div class="ion-text-center">
+      <ion-button (click)="Upload()">Upload</ion-button>
+    </div>
+
+
+
+  </form>
+
+
+</swiper-slide>
+</swiper-container>
+  </form>
+</ion-content>

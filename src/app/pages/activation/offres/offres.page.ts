@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import {  Router } from '@angular/router';
+import {  ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 
 
 @Component({
@@ -14,7 +14,7 @@ import {  Router } from '@angular/router';
 })
 export class OffresPage implements OnInit {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router,private route:ActivatedRoute) { }
 
   ngOnInit() {
   }
@@ -24,9 +24,18 @@ export class OffresPage implements OnInit {
     this.router.navigateByUrl('/super-box');
 
   }
-  onClickFBOX(){}
+  onClickFBOX(){
+    const params: NavigationExtras = {
+      queryParams: {source: 'fastboxplus'}
+    }
+    this.router.navigate(['/fast-box'], params);
+
+  }
   onClickFASTBOX(){
-    this.router.navigateByUrl('/fast-box');
+    const params: NavigationExtras = {
+      queryParams: {source: 'fastbox'}
+    }
+    this.router.navigate(['/fast-box'], params);
   }
 
 }

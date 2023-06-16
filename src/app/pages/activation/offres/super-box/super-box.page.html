@@ -1,76 +1,114 @@
-<ion-header>
-  <ion-toolbar>
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="offres"></ion-back-button>
+    </ion-buttons>
     <ion-title>SuperBox</ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content>
-  <form [formGroup]="prospector" (ngSubmit)="submit()">
+<ion-content [fullscreen]="true">
+    <form  [formGroup]="prospector" (ngSubmit)="submit()">
+      <swiper-container
+      [pagination]="true"
 
-  <swiper-container>
-    <swiper-slide>
-      <ion-item>
-        <ion-label>Choix:</ion-label>
-        <ion-select formControlName="choix">
-          <ion-select-option value="15Go/mois">15Go/mois</ion-select-option>
-          <ion-select-option value="25Go/mois">25Go/mois</ion-select-option>
-          <ion-select-option value="35Go/mois">35Go/mois</ion-select-option>
-        </ion-select>
-      </ion-item>
-      <div>
-        <label for="nom">ICCID:</label>
-        <input type="text"
-         id="iccid"
-        name="iccid"
-        formControlName="iccid">
-      </div>
-      <div>
-        <label for="nom">Numero de serie :</label>
-        <input type="text"
-        id="Numero de serie"
-        name="Numero de serie"
-        formControlName="numeroserie"
-        >
-      </div>
-      <div>
-        <label >Zone de recherche:</label>
-        <input type="text" id="Zone de recherche" name="Zone de recherche"
-        formControlName="zonerecherche"
-        >
-      </div>
-      <div>
-        <label>MSISDN:</label>
-        <input type="text"
-         id="MSISDN"
-         name="MSISDN"
+      >
+        <swiper-slide>
+          <ion-card>
+            <ng-container>
+              <ion-select
+  formControlName="choix"
+  label="Choix"
+  label-placement="floating"
+  fill="outline"
+  name="choix"
+  required
+>
+  <ion-select-option value="15Go/mois">15Go/mois</ion-select-option>
+  <ion-select-option value="25Go/mois">25Go/mois</ion-select-option>
+  <ion-select-option value="35Go/mois">35Go/mois</ion-select-option>
+</ion-select>
+
+
+              <ion-input
+              label="ICCID"
+              label-placement="floating"
+              fill="outline"
+
+              type="text"
+              formControlName="iccid"
+              errorText="iccid complet requis"
+                >
+            </ion-input>
+
+            <ion-input
+            label="Numero de serie:"
+            label-placement="floating"
+            fill="outline"
+            type="text"
+            formControlName="numeroserie"
+            errorText="Numero de serie requis"
+            >
+          </ion-input>
+          <ion-input
+          label="Zone de recherche:"
+          label-placement="floating"
+          fill="outline"
+          type="text"
+          formControlName="zonerecherche"
+          errorText="Zone de recherche requis"
+          >
+        </ion-input>
+        <ion-input
+        label="MSISDN:"
+        label-placement="floating"
+        fill="outline"
+        type="text"
         formControlName="msisdn"
+        errorText="MSISDNrequis"
         >
-      </div>
-      <div class="ion-text-center">
-        <ion-button (click)="ActiverBox()">ActiverBOX</ion-button>
-      </div>
-    </swiper-slide>
-    <swiper-slide>
-      <ion-item>
-        <label >Signature Client:</label>
-        <canvas #signaturePad width="500" height="200"></canvas>
+      </ion-input>
 
-        <div class="ion-text-center">
-          <ion-buttons>
-            <ion-button (click)="clear()">Clear</ion-button>
-          </ion-buttons>
-          <ion-buttons>
-            <ion-button (click)="submit()">Submit</ion-button>
-          </ion-buttons>
-        </div>
-      </ion-item>
       <div class="ion-text-center">
-        <ion-button (click)="Valider()">Valider</ion-button>
-      </div>
-    </swiper-slide>
-  </swiper-container>
-  </form>
-</ion-content>
+  <ion-button (click)="ActiverBox()">Activer</ion-button></div>
+          </ng-container>
+          </ion-card>
+        </swiper-slide>
 
+        <swiper-slide>
+          <ion-card>
+            <ng-container>
+
+              <swiper-slide>
+                <ion-item>
+                  <label >Signature Client:</label>
+                  <canvas #signaturePad width="500" height="200"></canvas>
+
+                  <div class="ion-text-center">
+                    <ion-buttons>
+                      <ion-button (click)="clear()">Clear</ion-button>
+                    </ion-buttons>
+                    <ion-buttons>
+                      <ion-button (click)="submit()">Submit</ion-button>
+                    </ion-buttons>
+                  </div>
+                </ion-item>
+                <div class="ion-text-center">
+                  <ion-button (click)="Valider()">Valider</ion-button>
+                </div>
+              </swiper-slide>
+
+
+            </ng-container>
+
+
+
+          </ion-card>
+        </swiper-slide>
+      </swiper-container>
+
+    </form>
+
+  </ion-content>
 
 
 

@@ -11,6 +11,7 @@
           "standalone": true
         }
       },
+
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -36,7 +37,11 @@
                 "output": "./svg"
               }
             ],
-            "styles": ["src/theme/variables.scss", "src/global.scss"],
+            "styles": [
+              "src/theme/variables.scss",
+              "src/global.scss",
+              "node_modules/swiper/swiper-bundle.min.css"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -144,6 +149,9 @@
   "schematics": {
     "@ionic/angular-toolkit:component": {
       "styleext": "scss"
+    },
+    "compilerOptions": {
+      "types": ["swiper"]
     },
     "@ionic/angular-toolkit:page": {
       "styleext": "scss"

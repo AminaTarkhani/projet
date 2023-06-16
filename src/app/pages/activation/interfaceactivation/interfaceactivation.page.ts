@@ -5,6 +5,10 @@ import { AlertController, IonicModule, LoadingController } from '@ionic/angular'
 import {  Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl } from '@angular/forms';
+import { FormControl } from '@angular/forms';
+
+
 
 @Component({
   selector: 'app-interfaceactivation',
@@ -16,12 +20,14 @@ import { ReactiveFormsModule } from '@angular/forms';
      FormsModule,
      ReactiveFormsModule]
 })
+
 export class InterfaceactivationPage implements OnInit {
   selectedNationalite: any;
   otherNationalite: any;
   prospector: FormGroup ;
 
   place: 'CIN' | 'PASS' | 'SEJ' = 'CIN';
+
 
   constructor(private router: Router,private http:HttpClient,
     private loadingCtrl: LoadingController,
@@ -34,15 +40,16 @@ export class InterfaceactivationPage implements OnInit {
         nom: ['', Validators.required],
         prenom: ['' ,Validators.required],
         adresse: ['', Validators.required],
-        numeroidentite:['', Validators.required],
+        numeroidentite: [''],
+        numeroIdentite: ['', [Validators.required, Validators.maxLength(10)]],
+       numContact: ['',[Validators.required, Validators.maxLength(8)]],
         naissance: ['', Validators.required],
         gouvernorat : ['', Validators.required],
         localite: ['', Validators.required],
         codepostale: ['', Validators.required],
         delegation: ['', Validators.required],
-        numContact: ['', Validators.required],
         nationalite: ['', Validators.required],
-        email: ['', Validators.required],
+        email: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}')]],
       });
 
     }

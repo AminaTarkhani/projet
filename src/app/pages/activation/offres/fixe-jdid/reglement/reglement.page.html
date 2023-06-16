@@ -1,0 +1,95 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="fixe-jdid"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Reglement</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <form [formGroup]="reg" (ngSubmit)="submit()">
+    <swiper-container [pagination]="true">
+      <swiper-slide>
+          <ng-container>
+  <ion-select
+  formControlName="paiement"
+  label="Moyens de paiement"
+  label-placement="floating"
+  fill="outline"
+  name="moyens de paiement"
+  required
+>
+  <ion-select-option value="cheques">cheques</ion-select-option>
+  <ion-select-option value="especes">especes</ion-select-option>
+  <ion-select-option value="carte">carte bancaire</ion-select-option>
+</ion-select>
+          </ng-container>
+        <ion-input
+        label="Montant"
+        label-placement="floating"
+        fill="outline"
+        step="0.01"
+        type="number"
+        formControlName="montant"
+        errorText="Montant complet requis"
+      ></ion-input>
+      <ion-input
+      label="CIN"
+      label-placement="floating"
+      fill="outline"
+      type="number"
+      formControlName="cin"
+      maxlength="8"
+      errorText="CIN complet requis"
+    ></ion-input>
+
+    <ion-input
+    label="Code Banque"
+    label-placement="floating"
+    fill="outline"
+    type="password"
+    inputmode="numeric-password"
+    formControlName="code"
+    errorText="Code banque complet requis"
+  ></ion-input>
+
+  <ion-input
+
+          label="Date de naissance"
+          label-placement="floating"
+          fill="outline"
+          placeholder="Date de naissance"
+          type="Date"
+          formControlName="naissance"
+          required
+        >
+  </ion-input>
+  <ion-input
+
+          label="RIB"
+          label-placement="floating"
+          fill="outline"
+          placeholder="RIB"
+          type="number"
+          formControlName="rib"
+          errorText="RIB complet requis"
+
+          required
+        >
+  </ion-input>
+  <div class="ion-text-center"(click)="Valider()">
+    <ion-button type="button"
+    type="submit"
+    shape="round"
+    expand="block" >Valider</ion-button>
+    </div>
+    <div class="ion-text-center">
+      <ion-button type="button" (click)="retour()" shape="round" expand="block">
+        Retour
+      </ion-button>
+    </div>
+      </swiper-slide>
+    </swiper-container>
+    </form>
+</ion-content>
+

@@ -80,6 +80,27 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/activation/offres/fast-box/fast-box.page').then( m => m.FastBoxPage)
 
   },
+  {
+    path: 'detailprosp',
+    loadComponent: () => import('./pages/prospection/detailprosp/detailprosp.page').then( m => m.DetailprospPage)
+  },
+  {
+    path: 'raccordement',
+    loadComponent: () => import('./pages/activation/offres/raccordement/raccordement.page').then( m => m.RaccordementPage)
+  },
+  {
+    path: 'rac-fast-box',
+    loadComponent: () => import('./pages/activation/offres/raccordement/rac-fast-box/rac-fast-box.page').then( m => m.RacFastBoxPage)
+  },  {
+    path: 'fixe-jdid',
+    loadComponent: () => import('./pages/activation/offres/fixe-jdid/fixe-jdid.page').then( m => m.FixeJdidPage)
+  },
+  {
+    path: 'reglement',
+    loadComponent: () => import('./pages/activation/offres/fixe-jdid/reglement/reglement.page').then( m => m.ReglementPage)
+  },
+
+
 
 
 

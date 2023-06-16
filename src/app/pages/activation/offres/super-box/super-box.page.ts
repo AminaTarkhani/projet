@@ -6,9 +6,7 @@ import { CUSTOM_ELEMENTS_SCHEMA ,ElementRef} from '@angular/core';
 import SignaturePad from 'signature_pad';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-
-
-
+import { Swiper } from 'swiper';
 
 @Component({
   selector: 'app-super-box',
@@ -31,6 +29,10 @@ export class SuperBoxPage implements OnInit {
   private canvas: any;
   private signaturePadInstance: any;
   signatureImage!: string;
+  @ViewChild('swiper')
+  swiperRef: ElementRef | undefined;
+  swiper?: Swiper;
+  activeSlide: number = 0;
 
   constructor(private http:HttpClient,
     private loadingCtrl: LoadingController,
@@ -44,8 +46,20 @@ export class SuperBoxPage implements OnInit {
         zonerecherche:['', Validators.required],
         msisdn:['', Validators.required],
         signature_image:['', Validators.required],
+
       });
     }
+    swiperReady() {
+      this.swiper = this.swiperRef?.nativeElement.swiper;
+    }
+
+    goNext() {
+      this.swiper?.slideNext();
+    }
+
+  swiperSlideChanged(event: any) {
+    this.activeSlide = event.realIndex;
+  }
     public getSignatureImage(id: number) {
       const headers = new HttpHeaders().set('Accept', 'image/png');
       this.http.get(`http://localhost:8080/signature/${id}`, { headers, responseType: 'blob' })

@@ -1,10 +1,15 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Interface d'activation</ion-title>
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Interface Activation</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
+
+
   <form [formGroup]="prospector" (ngSubmit)="onSubmit()">
 
   <ion-grid>
@@ -49,10 +54,15 @@
           fill="outline"
           placeholder="Numero d identite"
           type="text"
+          maxlength="10"
           formControlName="numeroidentite"
            required
         >
         </ion-input>
+        <div *ngIf="prospector.get('numeroIdentite')?.invalid && (prospector.get('numeroIdentite')?.dirty || prospector.get('numeroIdentite')?.touched)" class="error-message">
+          <div *ngIf="prospector.get('numeroIdentite')?.errors?.['required']">Le numéro d'identité est requis.</div>
+          <div *ngIf="prospector.get('numeroIdentite')?.errors?.['maxlength']">Le numéro d'identité ne doit pas dépasser 10 chiffres.</div>
+        </div>
 
         <ion-input
 
@@ -145,20 +155,31 @@
   fill="outline"
   placeholder="Numéro de contact"
   type="tel"
+  maxlength="8"
   formControlName="numContact"
   required
 >
 </ion-input>
+<div *ngIf="prospector.get('numContact')?.invalid && (prospector.get('numContact')?.dirty || prospector.get('numContact')?.touched)" class="error-message">
+  <div *ngIf="prospector.get('numContact')?.errors?.['required']">Le numéro de telephone est requis.</div>
+  <div *ngIf="prospector.get('numContact')?.errors?.['maxlength']">Le numéro de telephone ne doit pas dépasser 8 chiffres.</div>
+</div>
 
 <ion-input
   label="Adresse email"
   label-placement="floating"
   fill="outline"
-  placeholder="Adresse email"
+  placeholder="exemple@example.com"
   type="email"
   formControlName="email"
   required
 >
+<div *ngIf="prospector.get('email')?.errors?.['required'] && (prospector.get('email')?.dirty || prospector.get('email')?.touched)" class="error-message">
+  L'adresse email est requise.
+</div>
+<div *ngIf="prospector.get('email')?.errors?.['pattern'] && (prospector.get('email')?.dirty || prospector.get('email')?.touched)" class="error-message">
+  L'adresse email doit être au format correct (ex. exemple@example.com).
+</div>
 
 </ion-input>
       </ion-col>

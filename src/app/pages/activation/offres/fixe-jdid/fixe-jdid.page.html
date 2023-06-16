@@ -1,0 +1,178 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="offres"></ion-back-button>
+    </ion-buttons>
+    <ion-title>FIXE JDID BOX</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <form [formGroup]="fixe" (ngSubmit)="submit()">
+<swiper-container  #swiper
+(afterinit)="swiperReady()"
+(slidechange)="swiperSlideChanged($event)"
+[pagination]="true"
+>
+      <swiper-slide>
+        <ion-card>
+          <ion-select
+            formControlName="type"
+            label="Type de Box"
+            label-placement="floating"
+            fill="outline"
+            name="Type de Box"
+            (ionChange)="updateTypeDeBox()"
+            required
+          >
+            <ion-select-option value="outdoor">Outdoor</ion-select-option>
+            <ion-select-option value="indoor">Indoor</ion-select-option>
+          </ion-select>
+
+          <ion-select
+            formControlName="abonnement"
+            label="Abonnement"
+            label-placement="floating"
+            fill="outline"
+            name="Abonnement"
+            required
+          >
+            <ion-select-option value="mensuelle">mensuelle</ion-select-option>
+            <ion-select-option value="semestrielle">semestrielle</ion-select-option>
+            <ion-select-option value="annuelle">annuelle</ion-select-option>
+            (ionChange)="updateAbonnement($event.target.value)"
+
+          </ion-select>
+          <ion-select
+            formControlName="debit"
+            label="Debit"
+            label-placement="floating"
+            fill="outline"
+            name="Debit"
+            errorText="Debit complet requis"
+            required
+          >
+            <ion-select-option value="8G">8G</ion-select-option>
+            <ion-select-option value="12G">12G</ion-select-option>
+          </ion-select>
+          <ion-input
+            label="IMEI"
+            label-placement="floating"
+            fill="outline"
+            type="text"
+            formControlName="imei"
+            errorText="imei complet requis"
+          ></ion-input>
+          <ion-input
+            label="KIT CODE"
+            label-placement="floating"
+            fill="outline"
+            type="text"
+            formControlName="kitcode"
+            errorText="Kit Code complet requis"
+          ></ion-input>
+          <ion-searchbar formControlName="msisdn" (ionChange)="searchMsisdn($event)"></ion-searchbar>
+          <ion-list *ngIf="searchResults">
+            <ion-item *ngFor="let item of searchResults" (click)="selectMsisdn(item.msisdn)">
+              <ion-label>{{ item.msisdn }}</ion-label>
+            </ion-item>
+          </ion-list>
+          <ion-label *ngIf="selectedMsisdn">Numéro sélectionné : {{ selectedMsisdn }}</ion-label>
+          <ion-label *ngIf="error" color="danger">{{ error }}</ion-label>        </ion-card>
+        <div class="ion-text-center">
+          <ion-button (click)="submit()" type="button"
+          type="submit"
+          shape="round"
+          expand="block" >Suivant</ion-button>
+          </div>
+      </swiper-slide>
+      <swiper-slide>
+        <ion-card>
+          <ion-item>
+            <ion-text slot="start">Formulaire d'abonnement</ion-text>
+            <ion-icon name='camera' slot="end" (click)="formulaire()"></ion-icon>
+          </ion-item>
+
+        </ion-card>
+        <ion-card>
+          <ion-item>
+            <ion-text slot="start">Conditions Generale</ion-text>
+            <ion-icon name='camera' slot="end" (click)="condition()"></ion-icon>
+          </ion-item>
+
+        </ion-card>
+        <ion-card>
+          <ion-item>
+            <ion-text slot="start">Preuve d'adresse</ion-text>
+            <ion-icon name='camera' slot="end" (click)="preuve()"></ion-icon>
+          </ion-item>
+        </ion-card>
+        <ion-card>
+          <ion-item>
+            <ion-text slot="start">Contrat Signé</ion-text>
+            <ion-icon name='camera' slot="end" (click)="contrat()"></ion-icon>
+          </ion-item>
+
+        </ion-card>
+        <div class="ion-text-center">
+          <ion-button (click)="submitForm()" type="button"
+          type="submit"
+          shape="round"
+          expand="block" >Upload</ion-button>
+          </div>
+      </swiper-slide>
+      <swiper-slide>
+
+        <ion-input
+        label="Type de box"
+        label-placement="floating"
+        fill="outline"
+        type="text"
+        formControlName="type"
+      ></ion-input>
+      <ion-input
+      label="Msisdn"
+      label-placement="floating"
+      fill="outline"
+      type="text"
+      formControlName="msisdn"
+    ></ion-input>
+    <ion-input
+    label="Engagement"
+    label-placement="floating"
+    fill="outline"
+    type="text"
+    [value]="fixe.get('abonnement')?.value"
+    ></ion-input>
+
+
+          <swiper-slide>
+            <ion-card>
+              <ion-item>
+              <label >Signature Client:</label>
+              <canvas #signaturePad width="500" height="200"></canvas>
+
+              <div class="ion-text-center">
+                <ion-buttons>
+                  <ion-button (click)="clear()">Clear</ion-button>
+                </ion-buttons>
+                <ion-buttons>
+                  <ion-button (click)="Submit()">Submit</ion-button>
+                </ion-buttons>
+              </div>
+              </ion-item>
+              </ion-card>
+              <div class="ion-text-center">
+                <ion-button (click)="reglement()" type="button"
+                shape="round"
+                expand="block" >Reglement</ion-button>
+                </div>
+
+          </swiper-slide>
+
+
+      </swiper-slide>
+
+
+    </swiper-container>
+  </form>
+</ion-content>

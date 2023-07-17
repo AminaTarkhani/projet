@@ -1,30 +1,34 @@
+<ion-toolbar color="primary">
+  <ion-buttons slot="start">
+    <ion-back-button  defaultHref="prospection"></ion-back-button>
+  </ion-buttons>
+  <ion-title>Fiche de prospection</ion-title>
+
+  <ion-buttons slot="end">
+    <ion-button (click)="gotoHome()">
+      <ion-icon name="close-outline"></ion-icon>
+    </ion-button>
+  </ion-buttons>
+</ion-toolbar>
+
 <ion-content [fullscreen]="true">
-  <ion-item>
-    <ion-buttons>
-      <ion-back-button  defaultHref="prospection"></ion-back-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button (click)="gotoHome()">
-        <ion-icon name="close-outline"></ion-icon>
-
-      </ion-button>
-    </ion-buttons>
-  </ion-item>
-
-
-    <ion-title>Fiche de prospection</ion-title>
-
 
     <form  [formGroup]="prospector" (ngSubmit)="onSubmit()">
 
 
-      <swiper-container
-      [pagination]="true"
 
+
+
+      <swiper-container
+      #swiper
+      (afterinit)="swiperReady()"
+      (slidechange)="swiperSlideChanged($event)"
+      [pagination]="true"
       >
         <swiper-slide>
           <ion-card>
             <ng-container>
+
 
 
 
@@ -40,7 +44,13 @@
 
                   <ion-select-option value="Fibre Optique">Fibre Optique</ion-select-option>
                 </ion-select>
-               
+                <!--
+                  <ion-select-option value="Fixe Jdid">Fixe Jdid</ion-select-option>
+                  <ion-select-option value="ADSL">ADSL</ion-select-option>
+                  <ion-select-option value="VDSL">VDSL</ion-select-option>
+                <ion-select-option value="Fixe Box">Fixe Box</ion-select-option>
+
+                -->
 
               <ion-input
               label="Nom & prénom *"
@@ -90,7 +100,32 @@
             >
         </ion-input>
 
+  <!--
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-buttons button=""  (click)="getActualPosAlert('Confirmation', 'Voulez vous vraiment récupérer vos coordonnées actuelles?')">
+                <ion-text>Ma position actuelle</ion-text>
+                <ion-icon
+                 name="locate" slot="end" color="success">
+                </ion-icon>
+              </ion-buttons>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item class="ion-activated">
+              <ion-buttons button=""  (click)="goToMaps()">
+                <ion-text slot="start">Ouvrir la carte</ion-text>
+              <ion-icon
+              name="location" slot="end"  color="success">
+              </ion-icon>
+            </ion-buttons>
 
+            </ion-item>
+          </ion-col>
+        </ion-row>
+
+  -->
   <ion-item>
     <ion-buttons button=""  (click)="getActualPosAlert('Confirmation', 'Voulez vous vraiment récupérer vos coordonnées actuelles?')">
       <ion-text>Récupérer ma position actuelle</ion-text>
@@ -144,11 +179,30 @@
 
           </ng-container>
           </ion-card>
+          <!--/////////////////////////////////////
+          /////////////////////////////////////////
+          /////////////////////////////////////////-->
+
+          <ion-row>
+            <ion-col>
+              <ion-item
+              (click)="goNext()"
+              lines="none">
+                <ion-buttons  slot="end">
+                    Page suivante
+                  <ion-button color="success">
+                    <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+                  </ion-button>
+                </ion-buttons>
+              </ion-item>
+            </ion-col>
+          </ion-row>
         </swiper-slide>
 
 
 
         <swiper-slide>
+
           <ion-card>
             <ng-container>
               <ion-select
@@ -289,7 +343,16 @@
           </ion-card>
 
 
-
+          <ion-item
+          (click)="goPrev()"
+          lines="none">
+            <ion-buttons  slot="start">
+              <ion-button color="success">
+                <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+              </ion-button>
+              Page précédente
+            </ion-buttons>
+          </ion-item>
 
         </swiper-slide>
 
@@ -298,22 +361,18 @@
       </swiper-container>
 
 
-
+<div class="center-container">
   <ion-button
   [disabled]="!prospector.valid"
   type="submit"
   shape="round"
-  expand="block"
-
   >
   submit
   </ion-button>
-
-
+</div>
     </form>
 
   </ion-content>
-
 
 
 

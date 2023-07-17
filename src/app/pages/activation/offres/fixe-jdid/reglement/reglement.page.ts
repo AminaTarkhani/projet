@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule,ReactiveFormsModule,FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormsModule,ReactiveFormsModule,FormGroup, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { AlertController, IonicModule, LoadingController } from '@ionic/angular';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
 
@@ -20,33 +20,94 @@ import { forkJoin } from 'rxjs';
 
 })
 export class ReglementPage implements OnInit {
+  selectedPayment: string | undefined;
+  montant:number | undefined;
+  rib: number | undefined;
+  numeroCheque: number | undefined;
+  codeBanque: number | undefined;
+  codeAgence: number | undefined;
+  dateEcheance:Date | undefined;
+  typeIdentite: string | undefined;
+  numeroIdentite:number | undefined;
+  code:number | undefined;
+  months: string[] = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+  years: number[] = Array.from({ length: 20 }, (_, i) => 2023 + i);
   reg: FormGroup = this.formBuilder.group({
-    paiement:['',Validators.required],
-    montant:['',Validators.required],
-    cin: ['', [Validators.required, Validators.maxLength(8)]],
-    code:['',Validators.required],
-    naissance:['',Validators.required],
-    rib:['',Validators.required]
+    paiement: ['', Validators.required],
+    montant: ['', Validators.required],
+    rib:  ['', Validators.required],
+    numeroCheque:  ['', Validators.required],
+    codeBanque: ['', Validators.required],
+    codeAgence: ['', Validators.required],
+    dateEcheance:  ['', Validators.required],
+    typeIdentite: ['', Validators.required],
+    numeroIdentite: ['', Validators.required],
+    code: ['', Validators.required],
+    numerocarte:[''],
+    expirationMonth:[''],
+    expirationYear:[''],
+    nomdetenteur:[''],
+    ccv:[''],
+    email:['']
+
 
   });
+
+
+
+
+
 
   constructor(private formBuilder: FormBuilder,private http: HttpClient,
     private loadingCtrl: LoadingController,
     private alertCtrl: AlertController,
     private router: Router) { }
 
+
+
   ngOnInit() {
   }
-  submit(){}
- Valider(){
-  const formData = this.reg.value;
-  this.http.post('http://localhost:8080/Reglement/add', formData)
-  .subscribe(response => {
-    console.log('Données enregistrées avec succès !');
-  }, error => {
-    console.error('Une erreur s\'est produite lors de l\'enregistrement des données :', error);
 
-  });
+
+  submit(){}
+  async Valider() {
+    const formData = this.reg.value;
+
+    // Afficher une boîte de dialogue de confirmation
+    const confirmAlert = await this.alertCtrl.create({
+      header: 'Confirmation',
+      message: 'confirmer votre reglement?',
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          handler: () => {
+            console.log('Annuler clicked');
+          }
+        },
+        {
+          text: 'Confirmer',
+          handler: () => {
+            this.http.post('http://localhost:8080/Reglement/add', formData)
+              .subscribe(
+                response => {
+                  alert('succès !');
+                  this.router.navigate(['/home']);
+                },
+                error => {
+                  alert('Une erreur s\'est produite lors de l\'enregistrement des données :');
+                }
+              );
+          }
+        }
+      ]
+    });
+
+    // Afficher la boîte de dialogue de confirmation
+    await confirmAlert.present();
+
+
+
   this.submit();
     const emailEndpoint = 'http://localhost:8080/email/send';
     const smsEndpoint = 'http://localhost:8080/ooredoo/SMS';

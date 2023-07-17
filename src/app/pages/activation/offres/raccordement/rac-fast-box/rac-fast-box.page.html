@@ -11,11 +11,11 @@
 <ion-content [fullscreen]="true">
   <form [formGroup]="fastBox" (ngSubmit)="submit()">
     <swiper-container
-    #swiper
-    (afterinit)="swiperReady()"
-    (slidechange)="swiperSlideChanged($event)"
-    [pagination]="true"
-    >
+      #swiper
+      (afterinit)="swiperReady()"
+      (slidechange)="swiperSlideChanged($event)"
+      [pagination]="true"
+      >
       <swiper-slide>
         <ion-card>
           <ion-label>Offres:</ion-label>
@@ -27,8 +27,16 @@
             <ion-select-option value="8G">8G</ion-select-option>
             <ion-select-option value="12G">12G</ion-select-option>
           </ion-select>
-        </ion-card>
-
+          <ion-item
+          (click)="goNext()"
+          lines="none">
+            <ion-buttons  slot="end">
+                Page suivante
+              <ion-button color="success">
+                <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-item>
           <div class="ion-text-center">
             <ion-button (click)="Suivant()" type="button"
             [disabled]="!fastBox.valid"
@@ -36,6 +44,9 @@
             shape="round"
             expand="block">Suivant</ion-button>
           </div>
+        </ion-card>
+
+
 
       </swiper-slide>
       <swiper-slide>
@@ -43,12 +54,24 @@
           <ion-item>
             <ion-text slot="start">MondatTT</ion-text>
             <ion-icon name='camera' slot="end" (click)="captureImages()"></ion-icon>
+            <ion-button slot="end" (click)="exitCapture()">Exit</ion-button> <!-- Ajout du bouton "Exit" -->
 
           </ion-item>
           <div *ngIf="imageSource">
             <img [src]="imageSource" alt="Captured Image with Date and Time">
           </div>
+
         </ion-card>
+        <ion-item
+        (click)="goPrev()"
+        lines="none">
+       <ion-buttons  slot="start">
+      <ion-button color="success">
+       <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+        </ion-button>
+        Page précédente
+        </ion-buttons>
+        </ion-item>
         <div class="ion-text-center">
           <ion-button (click)="submitForm()" type="button"
           type="submit"
@@ -57,6 +80,8 @@
 
         </div>
       </swiper-slide>
+
+
     </swiper-container>
   </form>
 </ion-content>

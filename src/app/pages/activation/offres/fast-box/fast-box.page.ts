@@ -32,6 +32,7 @@ export class FastBoxPage implements OnInit {
   });
   @ViewChild('swiper', { read: ElementRef }) swiperElement!: ElementRef;
   @ViewChild('imageElement', { read: ElementRef }) imageElement!: ElementRef;
+  @ViewChild('swiper')
 
 
 
@@ -46,6 +47,9 @@ export class FastBoxPage implements OnInit {
 
   @ViewChild('signaturePad') signaturePad: any;
 
+  goNext() {
+    this.swiper?.slideNext();
+  }
   swiperSlideChanged(e: any) {
     console.log('changed: ', e);
   }
@@ -53,12 +57,9 @@ export class FastBoxPage implements OnInit {
   swiperReady() {
     this.swiper = this.swiperRef?.nativeElement.swiper;
   }
-
-  goNext() {
-    this.swiper?.slideNext();
+  goPrev() {
+    this.swiper?.slidePrev();
   }
-
-
   private signaturePadOptions: Object = { // options de signature_pad
     backgroundColor: '#ffffff',
     penColor: '#000000',
@@ -110,19 +111,34 @@ onClientPossedeNumeroChange() {
     });
 
     this.prospector = this.formBuilder.group({
-      msisdn: ['', Validators.required],
-      debit: ['', Validators.required],
+      msisdn: ['', [
+        Validators.required,
+        Validators.maxLength(8),
+        Validators.pattern('^[0-9]+$')
+      ]],
+       debit: ['', Validators.required],
       abonnement: ['', Validators.required],
       categorie: ['', Validators.required],
       numeroserie:['', Validators.required],
       prix: ['', Validators.required],
-      clientPossedeNumero:['', Validators.required],
-      signature_image:['', Validators.required],
+      clientPossedeNumero:[''],
+      signature_image:[''],
       numeroTT: [''],
       contratImage:[''],
       preuveImage:['']
 
     });
+  }
+  onInput(event: any) {
+    const inputValue: string = event.target.value;
+    const numericValue = inputValue.replace(/\D/g, ''); // Supprime tous les caractères non numériques
+
+    if (numericValue.length >= 8) {
+      event.target.value = numericValue.slice(0, 8); // Tronque l'entrée à la longueur maximale de 8
+      event.target.blur(); // Supprime le focus de l'entrée
+    } else {
+      event.target.value = numericValue; // Met à jour la valeur avec les chiffres uniquement
+    }
   }
    ngOnInit() {
     console.log(this.source);
@@ -132,7 +148,7 @@ onClientPossedeNumeroChange() {
   Verifier() {
     this.swiper?.slideNext();
 
-    const numeroTT = this.prospector.controls['numeroTT'].value;
+    const numeroTT = this.fastBox.controls['numeroTT'].value;
     if (numeroTT) {
       this.http.get<boolean>(`http://localhost:8080/FastBox/verify/${numeroTT}`).subscribe(
         (response) => {
@@ -153,9 +169,9 @@ onClientPossedeNumeroChange() {
 
 
   selectedAbonnement() {
-    if (this.prospector.controls['abonnement'].value === 'Fast Box 1P/2P : annuelle/semestrielle') {
+    if (this.fastBox.controls['abonnement'].value === 'Fast Box 1P/2P : annuelle/semestrielle') {
       this.selectedAbonnementType = 'annuelle/semestrielle';
-    } else if (this.prospector.controls['abonnement'].value === 'Fast Box Jdid / Fast+ Box : mensuelle') {
+    } else if (this.fastBox.controls['abonnement'].value === 'Fast Box Jdid / Fast+ Box : mensuelle') {
       this.selectedAbonnementType = 'mensuelle';
     } else {
       this.selectedAbonnementType = undefined;
@@ -202,17 +218,50 @@ onClientPossedeNumeroChange() {
   submit() {
     const signature = this.signaturePad.toDataURL();
   }
-  Valider(){
-    const dataURL = this.signaturePadInstance.toDataURL();
-    const signatureData = { signature: dataURL };
-    this.http.post('http://localhost:8080/FastBox/add', { signature: dataURL })
-    .subscribe(response => {
-     alert('Signature saved successfully!');
+  displayAttributeValues() {
+    console.log('Displaying attribute values...');
+  }
+  async Valider() {
+    if (this.signaturePadInstance.isEmpty()) {
+      alert('Veuillez signer avant de continuer.');
+    } else {
+      const dataURL = this.signaturePadInstance.toDataURL();
+      const signatureData = { signature: dataURL };
 
-    }, error => {
-      alert('Erreur');
-    });
+      // Afficher une boîte de dialogue de confirmation
+      const confirmAlert = await this.alertCtrl.create({
+        header: 'Confirmation',
+        message: 'Êtes-vous sûr de vouloir signer ?',
+        buttons: [
+          {
+            text: 'Annuler',
+            role: 'cancel',
+            handler: () => {
+              console.log('Cancel clicked');
+            }
+          },
+          {
+            text: 'Confirmer',
+            handler: () => {
+              this.http.post('http://localhost:8080/FastBox/add', { signature: dataURL })
+              .subscribe(
+                  response => {
+                    console.log('Signature saved successfully!');
+                    this.displayAttributeValues(); // Call the method to display attribute values
+                    this.router.navigate(['/home']);
+                  },
+                  error => {
+                    console.error('Failed to save the signature:', error);
+                  }
+                );
+            }
+          }
+        ]
+      });
 
+      // Afficher la boîte de dialogue de confirmation
+      await confirmAlert.present();
+    }
   }
 
    onSubmit(){

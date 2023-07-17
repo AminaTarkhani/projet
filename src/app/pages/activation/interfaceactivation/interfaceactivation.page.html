@@ -23,7 +23,7 @@
             type="text"
             name="name"
             formControlName="nom"
-          required >
+           >
         </ion-input>
         <ion-input
 
@@ -34,7 +34,7 @@
           placeholder="Prenom"
           type="text"
           formControlName="prenom"
-          required
+
         >
         </ion-input>
 
@@ -56,7 +56,7 @@
           type="text"
           maxlength="10"
           formControlName="numeroidentite"
-           required
+
         >
         </ion-input>
         <div *ngIf="prospector.get('numeroIdentite')?.invalid && (prospector.get('numeroIdentite')?.dirty || prospector.get('numeroIdentite')?.touched)" class="error-message">
@@ -72,7 +72,7 @@
           placeholder="Date de naissance"
           type="Date"
           formControlName="naissance"
-          required
+
         >
         </ion-input>
 
@@ -84,7 +84,7 @@
           placeholder="Gouvernorat"
           type="text"
           formControlName="gouvernorat"
-          required
+
         >
         </ion-input>
         <ion-input
@@ -96,7 +96,7 @@
             type="text"
 
           formControlName="nationalite"
-          required >
+           >
         </ion-input>
       </ion-col>
 
@@ -109,7 +109,7 @@
           placeholder="Délégation"
           type="text"
           formControlName="delegation"
-          required
+
         >
         </ion-input>
 
@@ -121,7 +121,7 @@
           placeholder="Localité"
           type="text"
           formControlName="localite"
-          required
+
         >
         </ion-input>
 
@@ -133,7 +133,7 @@
           placeholder="Adresse"
           type="text"
           formControlName="adresse"
-          required
+
         >
         </ion-input>
 
@@ -145,7 +145,7 @@
           placeholder="Code postal"
           type="text"
           formControlName="codepostale"
-          required
+
         >
         </ion-input>
         <ion-input
@@ -154,10 +154,10 @@
   label-placement="floating"
   fill="outline"
   placeholder="Numéro de contact"
-  type="tel"
+  type="number"
   maxlength="8"
   formControlName="numContact"
-  required
+  (input)="onInput($event)"
 >
 </ion-input>
 <div *ngIf="prospector.get('numContact')?.invalid && (prospector.get('numContact')?.dirty || prospector.get('numContact')?.touched)" class="error-message">
@@ -169,10 +169,10 @@
   label="Adresse email"
   label-placement="floating"
   fill="outline"
-  placeholder="exemple@example.com"
   type="email"
+  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
   formControlName="email"
-  required
+
 >
 <div *ngIf="prospector.get('email')?.errors?.['required'] && (prospector.get('email')?.dirty || prospector.get('email')?.touched)" class="error-message">
   L'adresse email est requise.
@@ -186,7 +186,9 @@
     </ion-row>
   </ion-grid>
 
-<ion-button (click)="navigateToOffres()" type="submit" shape="round" expand="block">Suivant</ion-button>
+<ion-button (click)="navigateToOffres()" type="submit" shape="round" expand="block"
+[disabled]="!prospector.valid"
+>Suivant</ion-button>
 
 
 </form>

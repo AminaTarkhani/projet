@@ -20,7 +20,8 @@ export class OffresPage implements OnInit {
   }
   onClickFIXEJDIDBOX(){
     this.router.navigateByUrl('/fixe-jdid')}
-  onClickFLASHBOX(){}
+  onClickFLASHBOX(){    this.router.navigateByUrl('/flashbox')}
+
   onClickSUPERBOX(){
     this.router.navigateByUrl('/super-box');
 

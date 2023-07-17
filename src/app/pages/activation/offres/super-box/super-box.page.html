@@ -7,10 +7,12 @@
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
-    <form  [formGroup]="prospector" (ngSubmit)="submit()">
+    <form  [formGroup]="superbox" (ngSubmit)="submit()">
       <swiper-container
+      #swiper
+      (afterinit)="swiperReady()"
+      (slidechange)="swiperSlideChanged($event)"
       [pagination]="true"
-
       >
         <swiper-slide>
           <ion-card>
@@ -33,8 +35,7 @@
               label="ICCID"
               label-placement="floating"
               fill="outline"
-
-              type="text"
+              type="number"
               formControlName="iccid"
               errorText="iccid complet requis"
                 >
@@ -44,7 +45,7 @@
             label="Numero de serie:"
             label-placement="floating"
             fill="outline"
-            type="text"
+            type="number"
             formControlName="numeroserie"
             errorText="Numero de serie requis"
             >
@@ -61,51 +62,74 @@
         <ion-input
         label="MSISDN:"
         label-placement="floating"
+        (input)="onInput($event)"
         fill="outline"
-        type="text"
+        type="number"
+        maxlength="8"
         formControlName="msisdn"
-        errorText="MSISDNrequis"
-        >
-      </ion-input>
+        errorText="MSISDN requis"
+      ></ion-input>
 
-      <div class="ion-text-center">
-  <ion-button (click)="ActiverBox()">Activer</ion-button></div>
           </ng-container>
           </ion-card>
+          <ion-item
+          (click)="goNext()"
+          lines="none">
+            <ion-buttons  slot="end">
+                Page suivante
+              <ion-button color="success">
+                <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-item>
+          <div class="ion-text-center">
+            <ion-button
+            type="submit"
+            shape="round"
+            expand="block"
+            [disabled]="!superbox.valid"
+
+            >Activer</ion-button></div>
         </swiper-slide>
 
         <swiper-slide>
           <ion-card>
             <ng-container>
-
               <swiper-slide>
                 <ion-item>
-                  <label >Signature Client:</label>
-                  <canvas #signaturePad width="500" height="200"></canvas>
-
+                  <label for="nom">Signature Client :</label>
+                  <canvas #signaturePad></canvas>
                   <div class="ion-text-center">
                     <ion-buttons>
                       <ion-button (click)="clear()">Clear</ion-button>
                     </ion-buttons>
-                    <ion-buttons>
-                      <ion-button (click)="submit()">Submit</ion-button>
-                    </ion-buttons>
                   </div>
-                </ion-item>
+          </ion-item>
+                <ion-item
+              (click)="goPrev()"
+              lines="none">
+             <ion-buttons  slot="start">
+            <ion-button color="success">
+             <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+              </ion-button>
+              Page précédente
+              </ion-buttons>
+              </ion-item>
                 <div class="ion-text-center">
-                  <ion-button (click)="Valider()">Valider</ion-button>
+                 <ion-button (click)="Valider() "type="button"
+                 type="submit"
+                 shape="round"
+                 expand="block"
+                >Valider</ion-button>
                 </div>
               </swiper-slide>
 
 
+
             </ng-container>
-
-
-
           </ion-card>
         </swiper-slide>
       </swiper-container>
-
     </form>
 
   </ion-content>

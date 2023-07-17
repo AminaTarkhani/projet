@@ -40,8 +40,7 @@ export class InterfaceactivationPage implements OnInit {
         nom: ['', Validators.required],
         prenom: ['' ,Validators.required],
         adresse: ['', Validators.required],
-        numeroidentite: [''],
-        numeroIdentite: ['', [Validators.required, Validators.maxLength(10)]],
+        numeroidentite: ['', [Validators.required, Validators.maxLength(10)]],
        numContact: ['',[Validators.required, Validators.maxLength(8)]],
         naissance: ['', Validators.required],
         gouvernorat : ['', Validators.required],
@@ -49,9 +48,20 @@ export class InterfaceactivationPage implements OnInit {
         codepostale: ['', Validators.required],
         delegation: ['', Validators.required],
         nationalite: ['', Validators.required],
-        email: ['', [Validators.required, Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}')]],
+        email: ['', Validators.required],
       });
 
+    }
+    onInput(event: any) {
+      const inputValue: string = event.target.value;
+      const numericValue = inputValue.replace(/\D/g, ''); // Supprime tous les caractères non numériques
+
+      if (numericValue.length >= 8) {
+        event.target.value = numericValue.slice(0, 8); // Tronque l'entrée à la longueur maximale de 8
+        event.target.blur(); // Supprime le focus de l'entrée
+      } else {
+        event.target.value = numericValue; // Met à jour la valeur avec les chiffres uniquement
+      }
     }
 
 
@@ -60,6 +70,7 @@ export class InterfaceactivationPage implements OnInit {
   navigateToOffres() {
     this.router.navigate(['/offres']);
   }
+
 
   async onSubmit(){
     this.ConfirmationFormSubmitAlert('Confirmation', 'Confirmer la submission ?');
@@ -121,5 +132,3 @@ export class InterfaceactivationPage implements OnInit {
     await alert.present();
   }
 }
-
-

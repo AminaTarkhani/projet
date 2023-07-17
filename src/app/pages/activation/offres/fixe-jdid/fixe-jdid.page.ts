@@ -9,7 +9,7 @@ import { Swiper } from 'swiper';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import SignaturePad from 'signature_pad';
 
 
@@ -30,6 +30,9 @@ export class FixeJdidPage implements OnInit {
   availableMsisdns: string[] = [];
   ImageSourceContrat: string = '';
   signatureImage!: string;
+  typeDeBoxValue!: string;
+  msisdnValue!: string;
+  abonnementValue!: string;
   private signaturePadInstance: any;
   @ViewChild('signaturePad') signaturePad: any;
   private signaturePadOptions: Object = { // options de signature_pad
@@ -48,18 +51,19 @@ export class FixeJdidPage implements OnInit {
   fixe: FormGroup = this.formBuilder.group({
     debit: ['', Validators.required],
     type: ['', Validators.required],
-    abonnement:['',Validators.required],
-    imei:['',Validators.required],
-    kitcode:['',Validators.required],
-    recherche:['',Validators.required],
-    formulaire:['',Validators.required],
-    msisdn:['',Validators.required],
-    conditions:['',Validators.required],
-    preuves:['',Validators.required],
-    contrats:['',Validators.required]
-
+    abonnement: ['', Validators.required],
+    imei: ['', Validators.required],
+    kitcode: ['', Validators.required],
+    recherche: ['', Validators.required],
+    formulaire: [''],
+    msisdn: ['',Validators.required],
+    conditions: [''],
+    preuves: [''],
+    contrats: ['']
 
   });
+
+
 
   constructor(private formBuilder: FormBuilder,private http: HttpClient,  private loadingCtrl: LoadingController,
     private alertCtrl: AlertController,private router: Router) { }
@@ -67,6 +71,22 @@ export class FixeJdidPage implements OnInit {
   ngOnInit() {
     this.fetchAvailableMsisdns();
 
+  }
+  areFieldsValid(): boolean {
+    const imageFields = [
+      'formulaire',
+      'conditions',
+      'preuves',
+      'contrats'
+    ];
+
+    for (const field of imageFields) {
+      if (this.fixe.get(field)?.value) {
+        return false; // Si au moins un champ d'image est non vide, retourne false
+      }
+    }
+
+    return true; // Tous les champs d'image sont vides, retourne true
   }
   submit() {
     if (this.fixe.valid && this.fixe.value.msisdn) {
@@ -165,19 +185,18 @@ export class FixeJdidPage implements OnInit {
 isFirstSlideValid = false;
 isFormValid: boolean = false;
 isFormFilled: boolean = false;
+public formulaireCapturee: boolean = false;
+public conditionsCapturee: boolean = false;
+public preuveCapturee: boolean = false;
+public contratCapturee: boolean = false;
 
 currentSlideIndex = 0;
 
-
-Formulaire = async () => {
-  const image = await this.captureImages();
-  if (image?.dataUrl) {
-    const imageData = image.dataUrl.split(',')[1]; // Supprimer le préfixe MIME
-    this.ImageSourceContrat = imageData;
-  } else {
-    console.log('No image data available');
-  }
-};
+imageSources: { [key: string]: string } = {};
+formulaireImageSource: string | null = null;
+conditionsImageSource: string | null = null;
+preuveImageSource: string | null = null;
+contratImageSource:string | null = null;
 
 private captureImages = async () => {
   return await Camera.getPhoto({
@@ -188,134 +207,456 @@ private captureImages = async () => {
   });
 
 };
-Conditions = async () => {
-  const image = await this.captureImages();
-  if (image?.dataUrl) {
-    const imageData = image.dataUrl.split(',')[1]; // Supprimer le préfixe MIME
-    this.ImageSourceContrat = imageData;
-  } else {
-    console.log('No image data available');
-  }
-};
-contrats= async () => {
-  const image = await this.captureImages();
-  if (image?.dataUrl) {
-    const imageData = image.dataUrl.split(',')[1]; // Supprimer le préfixe MIME
-    this.ImageSourceContrat = imageData;
-  } else {
-    console.log('No image data available');
-  }
-};
-async contrat(){ try {
-
-  const image = await Camera.getPhoto({
-    resultType: CameraResultType.Base64,
-    source: CameraSource.Camera,
-    quality: 90
-  });
 
 
-const validImages = image.base64String;
-console.log(validImages);
-this.fixe.value.contrats = validImages;
 
-console.log(this.fixe.value.contrats);
-
-
-} catch (error) {
-console.error('Error capturing images:', error);
-
-}
-}
-async preuve(){
+async conditions() {
   try {
+    const image = await this.captureImages();
+    const captureDateTime = new Date().toLocaleString();
+    const validImages = image.dataUrl;
 
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+
+      if (context) {
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        context.drawImage(img, 0, 0);
+
+        const dateTimeText = captureDateTime;
+        context.font = '20px Arial';
+        context.fillStyle = 'white';
+        context.fillText(dateTimeText, 10, 30);
+
+        const reductionFactor = 0.5;
+        const desiredWidth = canvas.width * reductionFactor;
+        const desiredHeight = canvas.height * reductionFactor;
+
+        const resizedCanvas = document.createElement('canvas');
+        const resizedContext = resizedCanvas.getContext('2d');
+
+        if (resizedContext) {
+          resizedCanvas.width = desiredWidth;
+          resizedCanvas.height = desiredHeight;
+
+          resizedContext.drawImage(
+            canvas,
+            0,
+            0,
+            canvas.width,
+            canvas.height,
+            0,
+            0,
+            desiredWidth,
+            desiredHeight
+          );
+
+          const resizedImageDataWithDateTime = resizedCanvas.toDataURL('image/jpeg', 0.9);
+
+          // Enregistrez l'image capturée dans la variable conditionsImageSource
+          this.conditionsImageSource = resizedImageDataWithDateTime;
+        } else {
+          console.error('Impossible d\'obtenir le contexte du canvas réduit.');
+        }
+      }
+    };
+
+    if (validImages) {
+      img.src = validImages;
+    } else {
+      console.error('Données base64 invalides pour l\'image capturée.');
+    }
+  } catch (error) {
+    console.error('Erreur lors de la capture d\'images :', error);
+  }
+}
+
+
+
+  async formualire() {
+    try {
+      const image = await Camera.getPhoto({
+        resultType: CameraResultType.Base64,
+        source: CameraSource.Camera,
+        quality: 90,
+      });
+
+      const captureDateTime = new Date().toLocaleString();
+      const validImages = image.base64String;
+
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+
+        if (context) {
+          canvas.width = img.width;
+          canvas.height = img.height;
+
+          context.drawImage(img, 0, 0);
+
+          const dateTimeText = captureDateTime;
+          context.font = '20px Arial';
+          context.fillStyle = 'white';
+          context.fillText(dateTimeText, 10, 30);
+
+          const reductionFactor = 0.5;
+          const desiredWidth = canvas.width * reductionFactor;
+          const desiredHeight = canvas.height * reductionFactor;
+
+          const resizedCanvas = document.createElement('canvas');
+          const resizedContext = resizedCanvas.getContext('2d');
+
+          if (resizedContext) {
+            resizedCanvas.width = desiredWidth;
+            resizedCanvas.height = desiredHeight;
+
+            resizedContext.drawImage(
+              canvas,
+              0,
+              0,
+              canvas.width,
+              canvas.height,
+              0,
+              0,
+              desiredWidth,
+              desiredHeight
+            );
+
+            const resizedImageDataWithDateTime = resizedCanvas.toDataURL('image/jpeg', 0.9);
+
+            // Enregistrez l'image capturée dans la variable preuveImageSource
+            this.formulaireImageSource = resizedImageDataWithDateTime;
+          } else {
+            console.error('Impossible d\'obtenir le contexte du canvas réduit.');
+          }
+        }
+      };
+
+      img.src = 'data:image/jpeg;base64,' + validImages;
+    } catch (error) {
+      console.error('Erreur lors de la capture d\'images :', error);
+    }
+  }
+  async preuve() {
+    try {
+      const image = await Camera.getPhoto({
+        resultType: CameraResultType.Base64,
+        source: CameraSource.Camera,
+        quality: 90,
+      });
+
+      const captureDateTime = new Date().toLocaleString();
+      const validImages = image.base64String;
+
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+
+        if (context) {
+          canvas.width = img.width;
+          canvas.height = img.height;
+
+          context.drawImage(img, 0, 0);
+
+          const dateTimeText = captureDateTime;
+          context.font = '20px Arial';
+          context.fillStyle = 'white';
+          context.fillText(dateTimeText, 10, 30);
+
+          const reductionFactor = 0.5;
+          const desiredWidth = canvas.width * reductionFactor;
+          const desiredHeight = canvas.height * reductionFactor;
+
+          const resizedCanvas = document.createElement('canvas');
+          const resizedContext = resizedCanvas.getContext('2d');
+
+          if (resizedContext) {
+            resizedCanvas.width = desiredWidth;
+            resizedCanvas.height = desiredHeight;
+
+            resizedContext.drawImage(
+              canvas,
+              0,
+              0,
+              canvas.width,
+              canvas.height,
+              0,
+              0,
+              desiredWidth,
+              desiredHeight
+            );
+
+            const resizedImageDataWithDateTime = resizedCanvas.toDataURL('image/jpeg', 0.9);
+
+            // Enregistrez l'image capturée dans la variable preuveImageSource
+            this.preuveImageSource = resizedImageDataWithDateTime;
+          } else {
+            console.error('Impossible d\'obtenir le contexte du canvas réduit.');
+          }
+        }
+      };
+
+      img.src = 'data:image/jpeg;base64,' + validImages;
+    } catch (error) {
+      console.error('Erreur lors de la capture d\'images :', error);
+    }
+  }
+
+
+async contrat() {
+  try {
+    const image = await Camera.getPhoto({
+      resultType: CameraResultType.Base64,
+      source: CameraSource.Camera,
+      quality: 90,
+    });
+
+    const captureDateTime = new Date().toLocaleString();
+    const validImages = image.base64String;
+
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+
+      if (context) {
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        context.drawImage(img, 0, 0);
+
+        const dateTimeText = captureDateTime;
+        context.font = '20px Arial';
+        context.fillStyle = 'white';
+        context.fillText(dateTimeText, 10, 30);
+
+        const reductionFactor = 0.5;
+        const desiredWidth = canvas.width * reductionFactor;
+        const desiredHeight = canvas.height * reductionFactor;
+
+        const resizedCanvas = document.createElement('canvas');
+        const resizedContext = resizedCanvas.getContext('2d');
+
+        if (resizedContext) {
+          resizedCanvas.width = desiredWidth;
+          resizedCanvas.height = desiredHeight;
+
+          resizedContext.drawImage(
+            canvas,
+            0,
+            0,
+            canvas.width,
+            canvas.height,
+            0,
+            0,
+            desiredWidth,
+            desiredHeight
+          );
+
+          const resizedImageDataWithDateTime = resizedCanvas.toDataURL('image/jpeg', 0.9);
+
+          // Enregistrez l'image capturée dans la variable preuveImageSource
+          this.contratImageSource = resizedImageDataWithDateTime;
+        } else {
+          console.error('Impossible d\'obtenir le contexte du canvas réduit.');
+        }
+      }
+    };
+
+    img.src = 'data:image/jpeg;base64,' + validImages;
+  } catch (error) {
+    console.error('Erreur lors de la capture d\'images :', error);
+  }
+}
+async captureImage(type: string) {
+  try {
+    const image = await this.captureImages();
+    const captureDateTime = new Date().toLocaleString();
+    const validImages = image.dataUrl;
+
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+
+      if (context) {
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        context.drawImage(img, 0, 0);
+
+        const dateTimeText = captureDateTime;
+        context.font = '20px Arial';
+        context.fillStyle = 'white';
+        context.fillText(dateTimeText, 10, 30);
+
+        const reductionFactor = 0.5;
+        const desiredWidth = canvas.width * reductionFactor;
+        const desiredHeight = canvas.height * reductionFactor;
+
+        const resizedCanvas = document.createElement('canvas');
+        const resizedContext = resizedCanvas.getContext('2d');
+
+        if (resizedContext) {
+          resizedCanvas.width = desiredWidth;
+          resizedCanvas.height = desiredHeight;
+
+          resizedContext.drawImage(
+            canvas,
+            0,
+            0,
+            canvas.width,
+            canvas.height,
+            0,
+            0,
+            desiredWidth,
+            desiredHeight
+          );
+
+          const resizedImageDataWithDateTime = resizedCanvas.toDataURL('image/jpeg', 0.9);
+
+          // Enregistrez l'image capturée dans la variable correspondante en fonction du type
+          if (type === 'formulaire') {
+            this.formulaireImageSource = resizedImageDataWithDateTime;
+          } else if (type === 'conditions') {
+            this.conditionsImageSource = resizedImageDataWithDateTime;
+          } else if (type === 'preuve') {
+            this.preuveImageSource = resizedImageDataWithDateTime;
+          } else if (type === 'contrat') {
+            this.contratImageSource = resizedImageDataWithDateTime;
+          } else {
+            console.error('Type d\'image invalide :', type);
+          }
+        } else {
+          console.error('Impossible d\'obtenir le contexte du canvas réduit.');
+        }
+      }
+    };
+
+    if (validImages) {
+      img.src = validImages;
+      return img; // Return the captured image data
+    } else {
+      console.error('Données base64 invalides pour l\'image capturée.');
+      return null; // Return null if image capture failed
+    }
+  } catch (error) {
+    console.error('Erreur lors de la capture d\'images :', error);
+    return null; // Return null if an error occurred during image capture
+  }
+}
+
+
+
+exitCapture(type: string) {
+  // Réinitialisez la variable correspondante à `null` pour effacer l'image affichée
+  if (type === 'formulaire') {
+    this.formulaireImageSource = null;
+  } else if (type === 'conditions') {
+    this.conditionsImageSource = null;
+  } else if (type === 'preuve') {
+    this.preuveImageSource = null;
+  }else if (type ==='contrat'){
+    this.contratImageSource = null;
+  }
+}
+
+
+async captureFormulaire() {
+  try {
     const image = await Camera.getPhoto({
       resultType: CameraResultType.Base64,
       source: CameraSource.Camera,
       quality: 90
     });
 
-
-  const validImages = image.base64String;
-  console.log(validImages);
-  this.fixe.value.preuves = validImages;
-
-  console.log(this.fixe.value.preuves);
-
-
+    if (image?.base64String) {
+      const validImage = image.base64String;
+      console.log(validImage);
+      this.fixe.value.formulaire = validImage;
+      console.log(this.fixe.value.formulaire);
+      this.formulaireCapturee = true; // Mettre à jour la variable après la capture réussie de l'image
+    } else {
+      console.log('No image captured');
+    }
   } catch (error) {
-  console.error('Error capturing images:', error);
-
-  }}
-
-
-
-async condition() {
-   try {
-
-  const image = await Camera.getPhoto({
-    resultType: CameraResultType.Base64,
-    source: CameraSource.Camera,
-    quality: 90
-  });
-
-
-const validImages = image.base64String;
-console.log(validImages);
-this.fixe.value.conditions = validImages;
-
-console.log(this.fixe.value.conditions);
-
-
-} catch (error) {
-console.error('Error capturing images:', error);
-
-}}
-
-async formulaire() {
-
-  try {
-
-      const image = await Camera.getPhoto({
-        resultType: CameraResultType.Base64,
-        source: CameraSource.Camera,
-        quality: 90
-      });
-
-
-    const validImages = image.base64String;
-    console.log(validImages);
-    this.fixe.value.formulaire = validImages;
-    console.log(this.fixe.value.formulaire);
-
-
-  } catch (error) {
-    console.error('Error capturing images:', error);
-
+    console.error('Error capturing image:', error);
   }
 }
 
+
+
+// Déclarez la variable isSubmitting
+isSubmitting = false;
+
 async submitForm() {
+  // Vérifiez si le formulaire est déjà en cours de soumission
+  if (this.isSubmitting) {
+    return;
+  }
+
+  this.isSubmitting = true;
+
   const loading = await this.loadingCtrl.create({
     message: 'Veuillez patienter...',
   });
   await loading.present();
+
+  // Enregistrer les valeurs des attributs dans des variables locales
+  const typeDeBoxValue = this.fixe.get('type')?.value;
+  const msisdnValue = this.fixe.get('msisdn')?.value;
+  const abonnementValue = this.fixe.get('abonnement')?.value;
+  const formulaireImage = this.fixe.get('formulaire')?.value;
+  const conditionsImage = this.fixe.get('conditions')?.value;
+  const preuvesImage = this.fixe.get('preuves')?.value;
+  const contratsImage = this.fixe.get('contrats')?.value;
+
+  const formulaireBlob = btoa(formulaireImage);
+  const conditionsBlob = btoa(conditionsImage);
+  const preuvesBlob = btoa(preuvesImage);
+  const contratsBlob = btoa(contratsImage);
+
   const formData = this.fixe.value;
   console.log(formData);
   this.http.post('http://localhost:8080/FixeJdid/ajouter', formData)
-  .subscribe((response) => {
-    loading.dismiss();
-    this.fixe.reset();
-    this.presentAlert('Succès', 'Votre demande a été envoyée avec succès.');
-    console.log('Form submitted successfully');
-  }, (error) => {
-    loading.dismiss();
-    this.presentAlert('Erreur', 'Échec de l"enregistrement des données dans la base de données. Veuillez réessayer plus tard.');
-    console.error('Error submitting form:', error);
-  });
+    .subscribe(
+      (response) => {
+        loading.dismiss();
+        this.presentAlert('Succès', 'Votre demande a été envoyée avec succès.');
+        console.log('Form submitted successfully');
 
+        // Réaffecter les valeurs des attributs après la soumission du formulaire
+        this.typeDeBoxValue = typeDeBoxValue;
+        this.msisdnValue = msisdnValue;
+        this.abonnementValue = abonnementValue;
+
+        // Réinitialiser le formulaire
+        this.fixe.reset();
+
+        // Rétablir l'état de soumission du formulaire à false
+        this.isSubmitting = false;
+      },
+      (error) => {
+        loading.dismiss();
+        this.presentAlert('Erreur', 'Échec de l\'enregistrement des données dans la base de données. Veuillez réessayer plus tard.');
+        console.error('Error submitting form:', error);
+
+        // Rétablir l'état de soumission du formulaire à false en cas d'erreur
+        this.isSubmitting = false;
+      }
+    );
 }
+
+
+
+
+imageSource: string = '';
 
 
 async presentAlert(header: string, message: string) {
@@ -331,6 +672,7 @@ async presentAlert(header: string, message: string) {
   }, 1000);
 }
 selectedTypeDeBox: string | undefined;
+selectedAbonnement:string|undefined;
 updateTypeDeBox() {
   const typeDeBoxControl = this.fixe.get('type');
 
@@ -341,27 +683,43 @@ updateTypeDeBox() {
     this.selectedTypeDeBox = undefined;
   }
 }
-updateAbonnement(value: string) {
+updateAbonnement() {
   const abonnementControl = this.fixe.get('abonnement');
-  if (abonnementControl) {
-    abonnementControl.setValue(value);
+
+  if (abonnementControl && abonnementControl.value !== null) {
+    this.selectedAbonnement = abonnementControl.value as string;
+    abonnementControl.patchValue(this.selectedAbonnement);
+  } else {
+    this.selectedAbonnement = undefined;
   }
 
 }
+
+
+
+
+
+displayAttributeValues() {
+
+
+}
+goNext() {
+  this.swiper?.slideNext();
+  this.displayAttributeValues();
+
+}
+swiperSlideChanged(e: any) {
+  console.log('changed: ', e);
+}
+
 swiperReady() {
   this.swiper = this.swiperRef?.nativeElement.swiper;
 }
+goPrev() {
+  this.swiper?.slidePrev();
+  this.displayAttributeValues();
 
-goNext() {
-  this.swiper?.slideNext();
 }
-activeSlide: number = 0;
-
-swiperSlideChanged(event: any) {
-  this.activeSlide = event.realIndex;
-}
-
-
 
 public displaySignatureImage(imageBlob: Blob) {
   const reader = new FileReader();
@@ -379,7 +737,18 @@ this.signaturePadInstance = new SignaturePad(this.canvas, this.signaturePadOptio
 public clear() {
 this.signaturePadInstance.clear();
 }
-reglement(){ this.router.navigate(['/reglement'])}
+reglement() {
+  this.displayAttributeValues();
+  if (this.signaturePadInstance.isEmpty()) {
+    alert('Veuillez signer avant de continuer.');
+  } else {
+    this.router.navigate(['/reglement'], {
+      queryParams: { source: 'fixe-jdid' }
+    });
+}
+}
+
+
 Submit(){
 const dataURL = this.signaturePadInstance.toDataURL();
 const signatureData = { signature: dataURL };

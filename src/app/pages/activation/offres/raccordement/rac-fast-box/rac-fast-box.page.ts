@@ -9,7 +9,7 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Swiper } from 'swiper';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-rac-fast-box',
@@ -25,6 +25,7 @@ export class RacFastBoxPage implements OnInit {
 
   fastBox: FormGroup;
   @ViewChild('swiper')
+
   swiperRef: ElementRef | undefined;
   swiper?: Swiper;
   constructor(
@@ -32,7 +33,8 @@ export class RacFastBoxPage implements OnInit {
     private alertCtrl: AlertController,
     private http:HttpClient,
     private formBuilder: FormBuilder,
-    private platform: Platform) {
+    private platform: Platform,
+    private router: Router) {
     this.fastBox = this.formBuilder.group({
       offres: ['', Validators.required],
       debit: ['', Validators.required],
@@ -40,13 +42,6 @@ export class RacFastBoxPage implements OnInit {
 
     });
   }
-  activeSlide: number = 0;
-
-  swiperSlideChanged(event: any) {
-    this.activeSlide = event.realIndex;
-  }
-
-
 
   ImageSourceContrat: string = '';
 
@@ -77,110 +72,150 @@ export class RacFastBoxPage implements OnInit {
     });
 
   };
+  goNext() {
+    this.swiper?.slideNext();
+  }
+  swiperSlideChanged(e: any) {
+    console.log('changed: ', e);
+  }
 
   swiperReady() {
     this.swiper = this.swiperRef?.nativeElement.swiper;
   }
-
-  goNext() {
-    this.swiper?.slideNext();
+  goPrev() {
+    this.swiper?.slidePrev();
   }
-
+  exitCapture() {
+    this.imageSource = '';
+  }
   captureDateTime: string | undefined;
+ async captureImages() {
+  try {
+    const image = await Camera.getPhoto({
+      resultType: CameraResultType.Base64,
+      source: CameraSource.Camera,
+      quality: 90,
+    });
 
+    const captureDateTime = new Date().toLocaleString();
+    const validImages = image.base64String;
 
+    // Créer un nouvel élément image
+    const img = new Image();
 
-  async captureImages() {
-    try {
-      const image = await Camera.getPhoto({
-        resultType: CameraResultType.Base64,
-        source: CameraSource.Camera,
-        quality: 90,
-      });
+    // Définir l'événement onload pour l'image
+    img.onload = () => {
+      // Créer un nouvel élément canvas
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
 
-      const captureDateTime = new Date().toLocaleString();
-      const validImages = image.base64String;
+      if (context) {
+        canvas.width = img.width;
+        canvas.height = img.height;
 
-      // Créer un nouvel élément image
-      const img = new Image();
+        // Dessiner l'image sur le canvas
+        context.drawImage(img, 0, 0);
 
-      // Définir l'événement onload pour l'image
-      img.onload = () => {
-        // Créer un nouvel élément canvas
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
+        // Dessiner la date et l'heure sur le canvas
+        const dateTimeText = captureDateTime;
+        context.font = '20px Arial';
+        context.fillStyle = 'white';
+        context.fillText(dateTimeText, 10, 30);
 
-        if (context) {
-          canvas.width = img.width;
-          canvas.height = img.height;
+        // Définir la taille souhaitée pour la réduction de l'image
+        const reductionFactor = 0.5; // Facteur de réduction, par exemple 0.5 réduit de moitié la taille
 
-          // Dessiner l'image sur le canvas
-          context.drawImage(img, 0, 0);
+        // Calculer les nouvelles dimensions réduites
+        const desiredWidth = canvas.width * reductionFactor;
+        const desiredHeight = canvas.height * reductionFactor;
 
-          // Dessiner la date et l'heure sur le canvas
-          const dateTimeText = captureDateTime;
-          context.font = '20px Arial';
-          context.fillStyle = 'white';
-          context.fillText(dateTimeText, 10, 30);
+        // Créer un nouvel élément canvas avec la taille réduite
+        const resizedCanvas = document.createElement('canvas');
+        const resizedContext = resizedCanvas.getContext('2d');
 
-          // Convertir le canvas en base64
-          const imageDataWithDateTime = canvas.toDataURL('image/jpeg', 0.9);
+        if (resizedContext) {
+          // Le contexte est valide, procédez avec les opérations sur le canvas réduit
+          resizedCanvas.width = desiredWidth;
+          resizedCanvas.height = desiredHeight;
 
-          // Utiliser imageDataWithDateTime comme vous le souhaitez
-          console.log('Image avec date et heure:', imageDataWithDateTime);
+          // Redimensionner l'image capturée sur le nouveau canvas réduit
+          resizedContext.drawImage(
+            canvas,
+            0,
+            0,
+            canvas.width,
+            canvas.height,
+            0,
+            0,
+            desiredWidth,
+            desiredHeight
+          );
 
-          // Afficher l'image avec la date et l'heure
-          this.imageSource = imageDataWithDateTime;
+          // Convertir le nouveau canvas en base64
+          const resizedImageDataWithDateTime = resizedCanvas.toDataURL('image/jpeg', 0.9);
+
+          // Utiliser resizedImageDataWithDateTime comme vous le souhaitez
+          console.log('Image réduite avec date et heure:', resizedImageDataWithDateTime);
+
+          // Afficher l'image réduite avec la date et l'heure
+          this.imageSource = resizedImageDataWithDateTime;
         } else {
-          console.error('Impossible d"obtenir le contexte du canvas.');
+          console.error('Impossible d"obtenir le contexte du canvas réduit.');
         }
-      };
+      }
+    };
 
-      // Définir la source de l'image sur l'image capturée
-      img.src = 'data:image/jpeg;base64,' + validImages;
-    } catch (error) {
-      console.error('Erreur lors de la capture d"images :', error);
-    }
+    // Définir la source de l'image sur l'image capturée
+    img.src = 'data:image/jpeg;base64,' + validImages;
+  } catch (error) {
+    console.error('Erreur lors de la capture d"images :', error);
   }
-
-
-  async submitForm() {
-    const loading = await this.loadingCtrl.create({
-      message: 'Veuillez patienter...',
-    });
-    await loading.present();
-    const formData = this.fastBox.value;
-
-
-    console.log(formData);
-    this.http.post('http://localhost:8080/Raccordement/add', formData)
-    .subscribe((response) => {
-      loading.dismiss();
-      this.fastBox.reset();
-      this.presentAlert('Succès', 'Votre demande de raccordement a été envoyée avec succès.');
-      console.log('Form submitted successfully');
-    }, (error) => {
-      loading.dismiss();
-      this.presentAlert('Erreur', 'Échec de l"enregistrement des données dans la base de données. Veuillez réessayer plus tard.');
-      console.error('Error submitting form:', error);
-    });
-
-  }
-
-
-  async presentAlert(header: string, message: string) {
-    const alert = await this.alertCtrl.create({
-      header,
-      message,
-      buttons: []
-    });
-    await alert.present();
-
-    setTimeout(() => {
-      alert.dismiss();
-    }, 1000);
-  }
-
-
-
 }
+
+displayAttributeValues() {
+  console.log('Displaying attribute values...');
+}
+
+async submitForm() {
+
+    const confirmAlert = await this.alertCtrl.create({
+      header: 'Confirmation',
+      message: 'Confirmer?',
+      buttons: [
+        {
+          text: 'Annuler',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Confirmer',
+          handler: () => {
+            const formData = this.fastBox.value;
+
+          console.log(formData);
+            this.http.post('http://localhost:8080/Raccordement/add', formData)
+            .subscribe(
+                response => {
+                  this.displayAttributeValues(); // Call the method to display attribute values
+                  this.router.navigate(['/home']);
+                },
+
+              );
+          }
+        }
+      ]
+    });
+
+    // Afficher la boîte de dialogue de confirmation
+    await confirmAlert.present();
+  }
+}
+
+
+
+
+
+
+

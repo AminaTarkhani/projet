@@ -1,55 +1,76 @@
-<ion-header class="ion-no-border">
+<ion-header [translucent]="true" class="ion-no-border">
 	<ion-toolbar>
 		<ion-buttons slot="start">
 			<ion-button>
-                <div class="headtainer">
                     <ion-img src="assets/images/head.png"/>
-                </div>
 			</ion-button>
 		</ion-buttons>
         <ion-title>Fixed App</ion-title>
 		<ion-buttons slot="end">
-			<ion-button class="bordered" fill="solid" color="light">
+			<ion-button class="bordered" color="dark">
                 <ion-icon name="notifications"></ion-icon>
             </ion-button>
 		</ion-buttons>
 	</ion-toolbar>
-
-
-
 </ion-header>
-<ion-content>
-  <ion-item lines="none">
-    <ion-label>
-        <p>What are you up,</p>
-        <h3>For today?</h3>
-    </ion-label>
 
-    <ion-avatar slot="end">  <img alt="test" src="assets/images/applee.png" /></ion-avatar>
-</ion-item>
 
-<div class="content_div">
+<ion-content [fullscreen]="true" class="ion-padding">
 
+<div  class="content_div">
     <ion-grid >
         <ion-row>
             <ion-col sizeLg="4" sizeMd="4" sizeXs="6" tappable (click)="goto(item)" *ngFor="let item of items ">
-
                 <div class="col_div">
-
                     <img src="{{item.img}}">
                     <ion-label>{{item.name}}</ion-label>
-
                 </div>
             </ion-col>
         </ion-row>
     </ion-grid>
 </div>
-</ion-content>
 
-<ion-footer>
-  <ion-toolbar>
-    <ion-title>
-      Footer
-    </ion-title>
-  </ion-toolbar>
-</ion-footer>
+
+<ion-modal #modal [isOpen]="isModalOpen">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <ion-title>Choisir le type d'offre</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="setOpen(false)">Fermer</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+        <ion-header >
+                <div>
+                    <ion-row>
+                        <ion-col>
+                            <div>
+                                <img src="assets/images/daisy.png">
+                            </div>
+                        </ion-col>
+
+                    </ion-row>
+                </div>
+        </ion-header>
+
+        <div class="content_div">
+            <ion-grid >
+                <ion-row>
+                    <ion-col sizeLg="4" sizeMd="4" sizeXs="6" tappable (click)="goToOffer(selection)" *ngFor="let selection of selections ">
+                        <div class="col_div">
+                            <img src="{{selection.img}}">
+                            <ion-label>{{selection.name}}</ion-label>
+                        </div>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+        </div>
+
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+</ion-content>

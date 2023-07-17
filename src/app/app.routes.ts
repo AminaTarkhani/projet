@@ -99,6 +99,26 @@ export const routes: Routes = [
     path: 'reglement',
     loadComponent: () => import('./pages/activation/offres/fixe-jdid/reglement/reglement.page').then( m => m.ReglementPage)
   },
+  {
+    path: 'popover',
+    loadComponent: () => import('./pages/maps/popover/popover.page').then( m => m.PopoverPage)
+  },
+  {
+    path: 'confirmation',
+    loadComponent: () => import('./pages/reservations/components/confirmation/confirmation.page').then( m => m.ConfirmationPage)
+  },
+  {
+    path: 'modalmap',
+    loadComponent: () => import('./pages/reservations/components/modalmap/modalmap.page').then( m => m.ModalmapPage)
+  },
+  {
+    path: 'placesselect',
+    loadComponent: () => import('./pages/reservations/components/placesselect/placesselect.page').then( m => m.PlacesselectPage)
+  },
+  {
+    path: 'flashbox',
+    loadComponent: () => import('./pages/activation/offres/flashbox/flashbox.page').then( m => m.FlashboxPage)
+  },
 
 
 

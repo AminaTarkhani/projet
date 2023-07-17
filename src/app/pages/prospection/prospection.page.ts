@@ -1,11 +1,12 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ComponentFactoryResolver, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, IonModal, ModalController } from '@ionic/angular';
-import { NavigationExtras, Router } from '@angular/router';
+import { IonicModule, IonModal, ModalController, NavParams } from '@ionic/angular';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { ProspectionService } from './formulaire/services/prospection.service.service';
 import { DetailprospPage } from './detailprosp/detailprosp.page';
+import { ProspectionService } from './formulaire/services/prospection.service';
+
 @Component({
   selector: 'app-prospection',
   templateUrl: './prospection.page.html',
@@ -28,16 +29,20 @@ export class ProspectionPage implements OnInit {
 
   //searchResults: any[] | undefined;
 
-
+  latitude: number | undefined;
+  longitude: number | undefined;
   place: 'CIN' | 'PASS' | 'SEJ' = 'CIN';
 
   constructor(
-        private http: HttpClient,
+
+        private prospectionService: ProspectionService,
         private router:Router,
-        private modalCtrl: ModalController)
+        private modalCtrl: ModalController,
+        private route: ActivatedRoute)
 
 
         {
+
           this.getListProspection();
         }
 
@@ -45,8 +50,16 @@ export class ProspectionPage implements OnInit {
   prospections:any = [];
 
   ngOnInit() {
-    this.selectedAttribute = 'fullName';
 
+    this.route.paramMap.subscribe(params => {
+      const state = window.history.state;
+      this.latitude = state.lat;
+      this.longitude = state.lng;
+    });
+    console.log(this.latitude, this.longitude);
+
+
+    this.selectedAttribute = 'fullName';
   }
 
 
@@ -60,50 +73,11 @@ export class ProspectionPage implements OnInit {
     await modal.present();
   }
 
-  searchProsp() {
-    if (!this.searchTerm || this.searchTerm.trim() === '') {
-      this.getListProspection();
-      return;
-    }
-
-    const url = `http://localhost:8080/SpringMVC/Prospection/search?attribute=${this.selectedAttribute}&query=${this.searchTerm}`;
-
-    this.http.get(url).subscribe((data) => {
-
-        this.prospections = data;
-        this.notFoundMessage = '';
-
-    });
-  }
-
-  filterItems() {
-    return this.prospections.filter((item: { name: string; }) => {
-      return item.name.toLowerCase().indexOf(this.searchTerm!.toLowerCase()) > -1;
-    });
-  }
-
 
   cancel() {
     this.modal!.dismiss(null, 'cancel');
   }
 
-
-  Search(){
-    console.log(this.place)
-    const params: NavigationExtras = {
-      queryParams: {type: this.place}
-    }
-    this.router.navigate(['/validation'], params);
-  }
-
-
-  getListProspection(){
-    this.http.get('http://localhost:8080/SpringMVC/Prospection/getallprospections')
-    .subscribe(data => {
-      console.log(data);
-      this.prospections = data;
-    })
-  }
 
   handleRefresh(event: any) {
     setTimeout(() => {
@@ -114,10 +88,42 @@ export class ProspectionPage implements OnInit {
 
 
 
+  Search(){
+    const navigationExtras: NavigationExtras = {
+      state: {
+        lat: this.latitude,
+        lng: this.longitude,
+      },
+      queryParams: {
+        type: this.place,
+      },
+    };
+    console.log(this.place);
+    console.log(this.latitude, this.longitude);
+    this.router.navigate(['/validation'], navigationExtras);
+
+  }
+
+  searchProsp() {
+    if (!this.searchTerm || this.searchTerm.trim() === '') {
+      this.getListProspection();
+      return;
+    }
+
+    this.prospectionService.searchProspection(this.selectedAttribute!, this.searchTerm)
+      .subscribe((data) => {
+        this.prospections = data;
+        this.notFoundMessage = '';
+      });
+  }
 
 
-
-
+  getListProspection(){
+    this.prospectionService.getAllProspection().subscribe(data => {
+      console.log(data);
+      this.prospections = data;
+    })
+  }
 
 }
 
@@ -136,6 +142,12 @@ export class ProspectionPage implements OnInit {
     await toast.present();
   }
 
+
+    filterItems() {
+    return this.prospections.filter((item: { name: string; }) => {
+      return item.name.toLowerCase().indexOf(this.searchTerm!.toLowerCase()) > -1;
+    });
+  }
 
   async presentAlert(header: string, message: string) {
     const alert = await this.alertCtrl.create({

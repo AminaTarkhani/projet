@@ -9,9 +9,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Swiper } from 'swiper';
 import { Router } from '@angular/router';
 
-
-
-
 @Component({
   selector: 'app-super-box',
   templateUrl: './super-box.page.html',

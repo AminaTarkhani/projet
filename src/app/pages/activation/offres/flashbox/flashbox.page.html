@@ -48,6 +48,11 @@
                 label-placement="floating"
                 fill="outline"
               ></ion-input>
+              <div *ngIf="flashbox">
+                <div *ngIf="flashbox.get('dateNaissance')?.hasError('ageInvalid')">
+                  {{ flashbox.get('dateNaissance')?.getError('ageInvalid') }}
+                </div>
+              </div>
             </ion-col>
             <ion-col>
               <ion-select
@@ -172,7 +177,6 @@
         <ion-input
         formControlName="contact"
         (input)="onInput($event)"
-
         label="Numero de Telephone"
         type="number"
         label-placement="floating"
@@ -209,6 +213,19 @@
               readonly
               formControlName="longitude"
               errorText="longitude requise"
+            ></ion-input>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-input
+              label="Ville *"
+              label-placement="floating"
+              fill="outline"
+              type="text"
+              formControlName="city"
+              errorText="ville requise"
+              readonly
             ></ion-input>
           </ion-col>
         </ion-row>
@@ -254,31 +271,13 @@
           <ion-grid>
             <ion-row>
               <ion-col>
-                <ion-item>
-                  <ion-text slot="start">SN</ion-text>
-                  <ion-icon name='camera' slot="end" (click)="captureImage('sn')"></ion-icon>
-                  <ion-button slot="end" (click)="exitCapture('sn')">Exit</ion-button>
-                </ion-item>
-                <div *ngIf="snImageSource">
-                  <img [src]="snImageSource" alt="Captured Image with Date and Time">
-                </div>
+
+
               </ion-col>
-              <ion-col *ngIf="isChecked === 'Level 4'">
-                <ion-item>
-                  <ion-text slot="start">ONT</ion-text>
-                  <ion-icon name='camera' slot="end" (click)="captureImage('ont')"></ion-icon>
-                  <ion-button slot="end" (click)="exitCapture('ont')">Exit</ion-button>
-                </ion-item>
-                <div *ngIf="ontImageSource">
-                  <img [src]="ontImageSource" alt="Captured Image with Date and Time">
-                </div>
-              </ion-col>
+
             </ion-row>
           </ion-grid>
-          <div class="ion-text-center">
-            <ion-checkbox formControlName="isChecked" name="checkbox" (ionChange)="toggleLevel4()"></ion-checkbox>
-            <label for="checkbox">Level 4</label>
-          </div>
+         
           <ion-button (click)="suivant()"
           type="button"
            shape="round"

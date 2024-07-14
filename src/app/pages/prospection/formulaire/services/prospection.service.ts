@@ -12,9 +12,7 @@ export class ProspectionService {
 
 
 
-  //formData: any = {};
-
-  //private prospection$ = new BehaviorSubject<ProspectionForm>(null!);
+ 
 
   constructor(private http:HttpClient) { }
 
@@ -39,13 +37,4 @@ export class ProspectionService {
 }
 
 
-/*
 
-  addProspection(formData: FormData): Observable<any> {
-    return this.http.post<any>(`${environment.baseApiUrl}/SpringMVC/Prospection/addProspection`, formData, {
-      reportProgress: true,
-      observe: 'events'
-    });
-  }
-
-*/

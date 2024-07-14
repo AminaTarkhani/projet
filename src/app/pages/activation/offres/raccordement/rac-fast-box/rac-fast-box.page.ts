@@ -21,11 +21,8 @@ import { Router } from '@angular/router';
 })
 export class RacFastBoxPage implements OnInit {
   imageSource: string = '';
-
-
   fastBox: FormGroup;
   @ViewChild('swiper')
-
   swiperRef: ElementRef | undefined;
   swiper?: Swiper;
   constructor(

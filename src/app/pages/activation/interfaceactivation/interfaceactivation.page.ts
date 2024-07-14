@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule,Validators } from '@angular/forms';
 import { AlertController, IonicModule, LoadingController } from '@ionic/angular';
 import {  Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AbstractControl } from '@angular/forms';
 import { FormControl } from '@angular/forms';
-
+import { CamundaServiceService } from 'src/app/services/camunda-service.service';
 
 
 @Component({
@@ -18,7 +18,10 @@ import { FormControl } from '@angular/forms';
   imports: [IonicModule,
      CommonModule,
      FormsModule,
-     ReactiveFormsModule]
+     ReactiveFormsModule,
+     HttpClientModule,],
+     providers: [CamundaServiceService]
+
 })
 
 export class InterfaceactivationPage implements OnInit {
@@ -33,6 +36,7 @@ export class InterfaceactivationPage implements OnInit {
     private loadingCtrl: LoadingController,
     private alertCtrl: AlertController,
     private formBuilder: FormBuilder,
+    private camundaService:CamundaServiceService
 
 
     ) {
@@ -96,6 +100,15 @@ export class InterfaceactivationPage implements OnInit {
     });
 
   }
+
+
+
+
+
+
+
+
+
   async presentAlert(header: string, message: string) {
     const alert = await this.alertCtrl.create({
       header,

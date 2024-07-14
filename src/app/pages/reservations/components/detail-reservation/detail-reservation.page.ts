@@ -4,13 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 @Component({
-  selector: 'app-reservation',
-  templateUrl: './reservation.page.html',
-  styleUrls: ['./reservation.page.scss'],
+  selector: 'app-detail-reservation',
+  templateUrl: './detail-reservation.page.html',
+  styleUrls: ['./detail-reservation.page.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule]
 })
-export class ReservationPage implements OnInit {
+export class DetailReservationPage implements OnInit {
 
   constructor() { }
 

@@ -12,7 +12,6 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 
 
-
 @Component({
   selector: 'app-flashbox',
   templateUrl: './flashbox.page.html',
@@ -32,7 +31,7 @@ export class FlashboxPage implements OnInit {
 
   adress: any;
   constructor(private formBuilder: FormBuilder,private alertCtrl: AlertController,
-    private router: Router,  private route: ActivatedRoute,private http: HttpClient
+    private router: Router,  private route: ActivatedRoute,private http: HttpClient,
 
     ) { }
 
@@ -73,7 +72,7 @@ export class FlashboxPage implements OnInit {
 
   flashbox: FormGroup = this.formBuilder.group({
     nom:['',Validators.required],
-    dateNaissance:['',Validators.required],
+    dateNaissance: ['', [Validators.required, this.validateDateOfBirth]],
     gouvernorat:['',Validators.required],
     localite:['',Validators.required],
     codepostal:['',Validators.required],
@@ -89,6 +88,7 @@ export class FlashboxPage implements OnInit {
     ]],
     latitude: [this.lati, Validators.required],
     longitude: [this.longi, Validators.required],
+    city: ['', Validators.required],
     civilite:['',Validators.required],
     offres:['',Validators.required],
     msisdn:['',Validators.required],
@@ -106,13 +106,33 @@ export class FlashboxPage implements OnInit {
 
   ngOnInit() {
   }
+  showError: boolean = false;
+  //Date de naissance superieur ou egal 18 ans
+  validateDateOfBirth(control: AbstractControl) {
+    const currentDate = new Date();
+    const selectedDate = new Date(control.value);
+
+    const age = currentDate.getFullYear() - selectedDate.getFullYear();
+
+    if (
+      age < 18 ||
+      (age === 18 && currentDate.getMonth() < selectedDate.getMonth()) ||
+      (age === 18 && currentDate.getMonth() === selectedDate.getMonth() && currentDate.getDate() < selectedDate.getDate())
+    ) {
+      return { ageInvalid: 'La date de naissance doit indiquer que vous avez au moins 18 ans.' };
+    }
+
+    return null;
+  }
+
+
   onInput(event: any) {
     const inputValue: string = event.target.value;
     const numericValue = inputValue.replace(/\D/g, ''); // Supprime tous les caractères non numériques
 
     if (numericValue.length >= 8) {
       event.target.value = numericValue.slice(0, 8); // Tronque l'entrée à la longueur maximale de 8
-      event.target.blur(); // Supprime le focus de l'entrée
+      event.target.blur();
     } else {
       event.target.value = numericValue; // Met à jour la valeur avec les chiffres uniquement
     }
@@ -425,7 +445,6 @@ export class FlashboxPage implements OnInit {
 
             const resizedImageDataWithDateTime = resizedCanvas.toDataURL('image/jpeg', 0.9);
 
-            // Enregistrez l'image capturée dans la variable preuveImageSource
             this.preuvesImageSource = resizedImageDataWithDateTime;
           } else {
             console.error('Impossible d\'obtenir le contexte du canvas réduit.');
@@ -617,7 +636,7 @@ export class FlashboxPage implements OnInit {
       this.flashbox.controls['codepostalInstallation'].setValue(codepostalInstallation);
     }
   }
-
+  private readonly API_URL = 'https://nominatim.openstreetmap.org/reverse';
 
   async getActualPosAlert(header: string, message: string) {
     const alert = await this.alertCtrl.create({
@@ -625,37 +644,64 @@ export class FlashboxPage implements OnInit {
       message,
       buttons: [
         {
-        text: 'Annuler',
-        role: 'cancel',
-        handler: () => {
+          text: 'Annuler',
+          role: 'cancel'
+        },
+        {
+          text: 'Confirmer',
+          handler: () => {
+            this.getCurrentLocation();
+          }
         }
-      },
-      {
-        text: 'Confirmer',
-        handler: () => {
-          this.getCurrentLocation();
-        }
-      }]
+      ]
     });
     await alert.present();
   }
+
   getCurrentLocation = async () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          this.lati = position.coords.latitude;
-          this.longi = position.coords.longitude;
-          this.flashbox.controls['latitude'].setValue(parseFloat(this.lati));
-          this.flashbox.controls['longitude'].setValue(parseFloat(this.longi));
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          // Mettre à jour les contrôles de formulaire avec les coordonnées
+          this.flashbox.controls['latitude'].setValue(lat);
+          this.flashbox.controls['longitude'].setValue(lon);
+          // Utiliser geolib pour obtenir la ville
+          const city = await this.getCityFromCoordinates(lat, lon);
+          this.flashbox.controls['city'].setValue(city);
+
         },
         (error) => {
-          console.error('Error getting current location:', error);
+          console.error('Erreur lors de l\'obtention de la position actuelle :', error);
         }
       );
     } else {
-      console.error('Geolocation is not supported by this browser.');
+      console.error('La géolocalisation n\'est pas prise en charge par ce navigateur.');
     }
   }
+
+  async getCityFromCoordinates(latitude: number, longitude: number): Promise<string> {
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
+    try {
+      const response: any = await this.http.get(url).toPromise();
+      if (response && response.address && response.address.city) {
+        return response.address.city;
+      } else if (response && response.address && response.address.village) {
+        return response.address.village;
+      } else if (response && response.address && response.address.town) {
+        return response.address.town;
+      } else if (response && response.address && response.address.hamlet) {
+        return response.address.hamlet;
+      } else {
+        return 'Ville inconnue';
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la ville à partir des coordonnées :', error);
+      return 'Ville inconnue';
+    }
+  }
+
   submitImages() {
     // Récupérez les données des images capturées
     const preuvesImageData = this.preuvesImageSource;
@@ -689,7 +735,6 @@ export class FlashboxPage implements OnInit {
         response => {
           console.log('Données enregistrées avec succès !');
 
-          // Appeler la méthode pour soumettre les images capturées
           this.submitImages();
         },
         error => {
@@ -699,47 +744,69 @@ export class FlashboxPage implements OnInit {
   }
 
 
+
   async suivant() {
     const formData = this.flashbox.value;
-    formData.isChecked = this.isChecked ? 'Level 4' : null;
 
-    // Afficher la boîte de dialogue d'alerte
-    const alert = await this.alertCtrl.create({
-      header: 'Confirmation',
-      message: 'Êtes-vous sûr de vouloir enregistrer ?',
-      buttons: [
-        {
-          text: 'Annuler',
-          role: 'cancel',
-          handler: () => {
-            // Action à effectuer lors de l'annulation
-          }
-        },
-        {
-          text: 'Confirmer',
-          handler: () => {
-            // Effectuer la requête HTTP
-            this.http.post('http://localhost:8080/FlashBox/add', formData)
-              .subscribe(
-                response => {
-                  console.log('Données enregistrées avec succès !');
+    // Premier message de confirmation
+    const firstConfirmation = await this.presentAlert('Confirmation', 'Êtes-vous sûr de vouloir enregistrer ?');
 
-                  // Naviguer vers une autre page
-                  this.router.navigate(['/reglement'], {
-                    queryParams: { source: 'flashbox' }
-                  });
-                },
-                error => {
-                  console.log('Une erreur s\'est produite lors de l\'enregistrement des données :', error);
-                }
-              );
+    // Si l'utilisateur confirme le premier message
+    if (firstConfirmation) {
+      // Deuxième message de confirmation
+      const secondConfirmation = await this.presentAlert('Confirmation', 'Voulez-vous passer au paiement ?');
+
+      // Si l'utilisateur confirme le deuxième message
+      if (secondConfirmation) {
+        // Effectuer la requête HTTP
+        this.http.post('http://localhost:8080/FlashBox/add', formData)
+          .subscribe(
+            response => {
+              console.log('Données enregistrées avec succès !');
+
+              // Naviguer vers une autre page
+              this.router.navigate(['/reglement'], {
+                queryParams: { source: 'flashbox' }
+              });
+            },
+            error => {
+              console.log('Une erreur s\'est produite lors de l\'enregistrement des données :', error);
+            }
+          );
+      } else {
+        // L'utilisateur a annulé le deuxième message, aucune action requise
+      }
+    } else {
+      // L'utilisateur a annulé le premier message, aucune action requise
+    }
+  }
+
+  async presentAlert(header: string, message: string): Promise<boolean> {
+    return new Promise(async (resolve) => {
+      const alert = await this.alertCtrl.create({
+        header,
+        message,
+        buttons: [
+          {
+            text: 'Annuler',
+            role: 'cancel',
+            handler: () => {
+              // L'utilisateur a annulé
+              resolve(false);
+            }
+          },
+          {
+            text: 'Confirmer',
+            handler: () => {
+              // L'utilisateur a confirmé
+              resolve(true);
+            }
           }
-        }
-      ]
+        ]
+      });
+
+      await alert.present();
     });
-
-    // Afficher la boîte de dialogue d'alerte
-    await alert.present();
   }
 
 

@@ -40,8 +40,8 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/activation/activation.page').then( m => m.ActivationPage)
   },
   {
-    path: 'reservation',
-    loadComponent: () => import('./pages/reservation/reservation.page').then( m => m.ReservationPage)
+    path: 'reservations',
+    loadComponent: () => import('./pages/reservations/reservations.page').then( m => m.ReservationsPage)
   },
   {
     path: 'sla',
@@ -91,7 +91,8 @@ export const routes: Routes = [
   {
     path: 'rac-fast-box',
     loadComponent: () => import('./pages/activation/offres/raccordement/rac-fast-box/rac-fast-box.page').then( m => m.RacFastBoxPage)
-  },  {
+  },
+  {
     path: 'fixe-jdid',
     loadComponent: () => import('./pages/activation/offres/fixe-jdid/fixe-jdid.page').then( m => m.FixeJdidPage)
   },
@@ -103,22 +104,24 @@ export const routes: Routes = [
     path: 'popover',
     loadComponent: () => import('./pages/maps/popover/popover.page').then( m => m.PopoverPage)
   },
+
+  {
+    path: 'flashbox',
+    loadComponent: () => import('./pages/activation/offres/flashbox/flashbox.page').then( m => m.FlashboxPage)
+  },
   {
     path: 'confirmation',
     loadComponent: () => import('./pages/reservations/components/confirmation/confirmation.page').then( m => m.ConfirmationPage)
   },
   {
+    path: 'detail-reservation',
+    loadComponent: () => import('./pages/reservations/components/detail-reservation/detail-reservation.page').then( m => m.DetailReservationPage)
+  },
+  {
     path: 'modalmap',
     loadComponent: () => import('./pages/reservations/components/modalmap/modalmap.page').then( m => m.ModalmapPage)
   },
-  {
-    path: 'placesselect',
-    loadComponent: () => import('./pages/reservations/components/placesselect/placesselect.page').then( m => m.PlacesselectPage)
-  },
-  {
-    path: 'flashbox',
-    loadComponent: () => import('./pages/activation/offres/flashbox/flashbox.page').then( m => m.FlashboxPage)
-  },
+
 
 
 
